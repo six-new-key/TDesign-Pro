@@ -1,0 +1,21 @@
+*{
+  margin: 0;
+  padding: 0;
+}
+
+/* TDesign 菜单弹出层图标间距优化 */
+.t-popup .t-menu__item .t-icon {
+  margin-right: 10px !important;
+}
+
+.t-popup .t-submenu__title .t-icon {
+  margin-right: 10px !important;
+}
+
+.t-menu--popup .t-menu__item {
+  gap: 10px !important;
+}
+
+.t-menu--popup .t-submenu__title {
+  gap: 10px !important;
+}
