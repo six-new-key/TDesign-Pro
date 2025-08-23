@@ -6,6 +6,7 @@ import { resolve } from 'path';
 import AutoImport from 'unplugin-auto-import/vite';
 import Components from 'unplugin-vue-components/vite';
 import { TDesignResolver } from '@tdesign-vue-next/auto-import-resolver';
+import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 
 // 导出 Vite 配置
 export default defineConfig(({ command, mode }) => {
@@ -44,6 +45,11 @@ export default defineConfig(({ command, mode }) => {
         resolvers: [TDesignResolver({
           library: 'vue-next'
         })],
+      }),
+      createSvgIconsPlugin({
+        // 配置svg图标所在位置
+        iconDirs: [path.resolve(process.cwd(), "src/assets/icons")],
+        symbolId: "icon-[dir]-[name]",
       }),
     ],
     //scss样式配置：global.scss中的变量可以全局使用
