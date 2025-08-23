@@ -91,8 +91,8 @@ const router = useRouter()
 const route = useRoute()
 const appStore = useAppStore()
 
-// 侧边栏折叠状态
-const collapsed = ref(false)
+// 侧边栏折叠状态从store获取
+const collapsed = computed(() => appStore.isSidebarCollapsed)
 
 // 菜单栏主题状态从store获取
 const sidebarTheme = computed(() => appStore.sidebarTheme)
@@ -128,7 +128,7 @@ const sidebarWidth = computed(() => {
 
 // 切换侧边栏折叠状态
 const toggleSidebar = () => {
-  collapsed.value = !collapsed.value
+  appStore.toggleSidebarCollapsed()
 }
 
 // 切换菜单栏主题

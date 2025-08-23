@@ -7,6 +7,7 @@ export const useAppStore = defineStore('app', () => {
   const title = ref('')
   const theme = ref('light') // 全局主题
   const sidebarTheme = ref('dark') // 菜单栏主题
+  const sidebarCollapsed = ref(false) // 侧边栏折叠状态
   const shouldRefresh = ref(false) // 页面刷新标志
   const menuItems = ref([]) // 缓存的菜单项数据
   const isLocked = ref(false) // 锁屏状态
@@ -16,6 +17,7 @@ export const useAppStore = defineStore('app', () => {
   const currentTitle = computed(() => title.value)
   const currentTheme = computed(() => theme.value)
   const currentSidebarTheme = computed(() => sidebarTheme.value)
+  const isSidebarCollapsed = computed(() => sidebarCollapsed.value)
   const lockStatus = computed(() => isLocked.value)
   const currentLockPassword = computed(() => lockPassword.value)
   
@@ -42,6 +44,14 @@ export const useAppStore = defineStore('app', () => {
   const toggleSidebarTheme = () => {
     const newTheme = sidebarTheme.value === 'dark' ? 'light' : 'dark'
     setSidebarTheme(newTheme)
+  }
+  
+  const setSidebarCollapsed = (collapsed) => {
+    sidebarCollapsed.value = collapsed
+  }
+  
+  const toggleSidebarCollapsed = () => {
+    sidebarCollapsed.value = !sidebarCollapsed.value
   }
   
   // 初始化主题
@@ -133,6 +143,7 @@ export const useAppStore = defineStore('app', () => {
     title,
     theme,
     sidebarTheme,
+    sidebarCollapsed,
     shouldRefresh,
     menuItems,
     isLocked,
@@ -140,6 +151,7 @@ export const useAppStore = defineStore('app', () => {
     currentTitle,
     currentTheme,
     currentSidebarTheme,
+    isSidebarCollapsed,
     lockStatus,
     currentLockPassword,
     setTitle,
@@ -147,6 +159,8 @@ export const useAppStore = defineStore('app', () => {
     setSidebarTheme,
     toggleTheme,
     toggleSidebarTheme,
+    setSidebarCollapsed,
+    toggleSidebarCollapsed,
     initTheme,
     setLockStatus,
     lockScreen,
@@ -163,6 +177,6 @@ export const useAppStore = defineStore('app', () => {
     key: 'app-store',
     storage: localStorage,
     //只有添加到里面才会持久化
-    paths: ['title', 'theme', 'sidebarTheme', 'isLocked', 'lockPassword']
+    paths: ['title', 'theme', 'sidebarTheme', 'sidebarCollapsed', 'isLocked', 'lockPassword']
   }
 })

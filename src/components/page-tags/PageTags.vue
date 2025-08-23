@@ -67,20 +67,20 @@ const navigateToPage = (path) => {
 const scrollToActiveTag = () => {
   nextTick(() => {
     if (!tagsContainer.value) return
-    
+
     const activeTag = tagsContainer.value.querySelector('.page-tag--active')
     if (!activeTag) return
-    
+
     const container = tagsContainer.value
     const containerRect = container.getBoundingClientRect()
     const tagRect = activeTag.getBoundingClientRect()
-    
+
     // 计算标签相对于容器的位置
     const tagLeft = activeTag.offsetLeft
     const tagRight = tagLeft + activeTag.offsetWidth
     const containerScrollLeft = container.scrollLeft
     const containerWidth = container.clientWidth
-    
+
     // 如果标签在可视区域左侧，滚动到标签位置
     if (tagLeft < containerScrollLeft) {
       container.scrollTo({
@@ -175,9 +175,11 @@ onUnmounted(() => {
 <style scoped>
 .page-tags-section {
   background: var(--td-bg-color-container);
-  padding: 3px 16px;
-  border-bottom: 1px solid var(--td-border-level-1-color);
-  box-shadow: var(--td-shadow-1);
+  padding: 5px 16px;
+  box-shadow: var(--td-shadow-1), 0 1px 2px rgba(0, 0, 0, 0.05);
+  /* 底部有抬高的视觉效果 */
+  position: relative;
+  z-index: 10;
 }
 
 .page-tags-wrapper {

@@ -86,6 +86,8 @@ watch(
   background: var(--td-bg-color-page);
   padding: 20px;
   overflow: auto;
+  max-height: calc(100vh - 140px);
+  overflow-y: scroll;
 }
 
 /* 页面切换动画 - 舒适的淡入淡出效果 */

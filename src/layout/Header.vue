@@ -57,7 +57,7 @@
 
   <!-- 页面标签组件 -->
   <PageTags />
-  
+
   <!-- 搜索对话框组件 -->
   <SearchDialog v-model="showSearchDialog" />
 </template>
@@ -166,6 +166,7 @@ const toggleGlobalTheme = () => {
   background: var(--td-bg-color-container);
   border-bottom: 1px solid var(--td-border-level-1-color);
   box-shadow: var(--td-shadow-1);
+  height: 52px;
 }
 
 .header-content {

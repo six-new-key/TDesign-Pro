@@ -653,6 +653,491 @@ VITE_PROD_SERVE=https://your-api-domain.com
 - 确认 persist 配置是否正确
 - 检查 paths 配置是否包含需要持久化的字段
 
+## ECharts 图表系统详解
+
+### ECharts 集成配置
+
+**位置**: `src/echarts/index.js`
+
+**功能**: ECharts 库的统一导入和配置管理。
+
+```javascript
+import * as echarts from 'echarts'
+
+// 导出 echarts 实例
+export { echarts }
+export default echarts
+```
+
+**依赖版本**: `echarts: ^6.0.0`
+
+### 图表组件使用指南
+
+#### 基础使用流程
+
+1. **引入 ECharts**:
+```javascript
+import { echarts } from '@/echarts'
+```
+
+2. **创建图表容器引用**:
+```javascript
+const chartRef = ref(null)
+let chartInstance = null
+```
+
+3. **初始化图表**:
+```javascript
+const initChart = () => {
+  if (chartRef.value) {
+    chartInstance = echarts.init(chartRef.value)
+    chartInstance.setOption(getChartOption())
+  }
+}
+```
+
+4. **响应式处理**:
+```javascript
+const handleResize = () => {
+  chartInstance?.resize()
+}
+
+// 监听窗口大小变化
+window.addEventListener('resize', handleResize)
+
+// 监听侧边栏折叠状态变化
+watch(
+  () => appStore.isSidebarCollapsed,
+  () => {
+    setTimeout(() => {
+      handleResize()
+    }, 300) // 等待CSS动画完成
+  }
+)
+```
+
+5. **生命周期管理**:
+```javascript
+onMounted(async () => {
+  await nextTick()
+  initChart()
+  window.addEventListener('resize', handleResize)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize)
+  chartInstance?.dispose()
+})
+```
+
+### 支持的图表类型
+
+#### 1. 面积图 (Area Chart)
+
+**配置示例**:
+```javascript
+const getAreaChartOption = () => {
+  return {
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'cross'
+      }
+    },
+    legend: {
+      data: ['流量趋势', '月访问量'],
+      top: 10
+    },
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '3%',
+      containLabel: true
+    },
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: ['6:00', '7:00', '8:00', ...] // 时间数据
+    },
+    yAxis: {
+      type: 'value',
+      max: 80000
+    },
+    series: [
+      {
+        name: '流量趋势',
+        type: 'line',
+        stack: 'Total',
+        areaStyle: {
+          color: {
+            type: 'linear',
+            x: 0, y: 0, x2: 0, y2: 1,
+            colorStops: [
+              { offset: 0, color: 'rgba(64, 158, 255, 0.8)' },
+              { offset: 1, color: 'rgba(64, 158, 255, 0.1)' }
+            ]
+          }
+        },
+        data: [0, 15000, 25000, ...] // 数据数组
+      }
+    ]
+  }
+}
+```
+
+**特性**:
+- 支持渐变填充
+- 多系列数据展示
+- 交互式提示框
+- 图例控制
+
+#### 2. 雷达图 (Radar Chart)
+
+**配置示例**:
+```javascript
+const getRadarChartOption = () => {
+  return {
+    tooltip: {},
+    radar: {
+      indicator: [
+        { name: '移动端', max: 100 },
+        { name: 'PC端', max: 100 },
+        { name: '平板', max: 100 },
+        { name: '其他', max: 100 }
+      ],
+      radius: '60%'
+    },
+    series: [
+      {
+        type: 'radar',
+        data: [
+          {
+            value: [80, 60, 40, 30],
+            name: '访问设备',
+            areaStyle: {
+              color: 'rgba(64, 158, 255, 0.3)'
+            },
+            lineStyle: {
+              color: '#409eff'
+            },
+            itemStyle: {
+              color: '#409eff'
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+**特性**:
+- 多维度数据展示
+- 自定义指标轴
+- 区域填充效果
+- 颜色主题定制
+
+#### 3. 环形图 (Doughnut Chart)
+
+**配置示例**:
+```javascript
+const getDoughnutChartOption = () => {
+  return {
+    tooltip: {
+      trigger: 'item'
+    },
+    legend: {
+      bottom: '5%',
+      left: 'center'
+    },
+    series: [
+      {
+        type: 'pie',
+        radius: ['40%', '70%'], // 内外半径
+        avoidLabelOverlap: false,
+        label: {
+          show: false,
+          position: 'center'
+        },
+        emphasis: {
+          label: {
+            show: true,
+            fontSize: '18',
+            fontWeight: 'bold'
+          }
+        },
+        labelLine: {
+          show: false
+        },
+        data: [
+          { value: 35, name: '搜索引擎', itemStyle: { color: '#409eff' } },
+          { value: 25, name: '直接访问', itemStyle: { color: '#67c23a' } },
+          // ...
+        ]
+      }
+    ]
+  }
+}
+```
+
+**特性**:
+- 环形展示
+- 悬停高亮效果
+- 自定义颜色
+- 图例交互
+
+#### 4. 饼图 (Pie Chart)
+
+**配置示例**:
+```javascript
+const getPieChartOption = () => {
+  return {
+    tooltip: {
+      trigger: 'item'
+    },
+    legend: {
+      orient: 'vertical',
+      right: '10%',
+      top: 'center'
+    },
+    series: [
+      {
+        type: 'pie',
+        radius: '60%',
+        center: ['40%', '50%'],
+        data: [
+          { value: 45, name: '搜索引擎', itemStyle: { color: '#67c23a' } },
+          { value: 30, name: '外站', itemStyle: { color: '#409eff' } },
+          { value: 25, name: '其他', itemStyle: { color: '#e6a23c' } }
+        ],
+        emphasis: {
+          itemStyle: {
+            shadowBlur: 10,
+            shadowOffsetX: 0,
+            shadowColor: 'rgba(0, 0, 0, 0.5)'
+          }
+        }
+      }
+    ]
+  }
+}
+```
+
+**特性**:
+- 标准饼图展示
+- 阴影效果
+- 垂直图例布局
+- 强调样式
+
+### 响应式图表实现
+
+#### 容器尺寸自适应
+
+```javascript
+// 监听窗口大小变化
+const handleResize = () => {
+  areaChart?.resize()
+  radarChart?.resize()
+  doughnutChart?.resize()
+  pieChart?.resize()
+}
+
+// 监听侧边栏状态变化
+watch(
+  () => appStore.isSidebarCollapsed,
+  () => {
+    // 延迟执行resize，等待CSS动画完成
+    setTimeout(() => {
+      handleResize()
+    }, 300)
+  }
+)
+```
+
+#### CSS 响应式设计
+
+```css
+.chart-container {
+  width: 100%;
+  height: 400px;
+}
+
+.chart-container-small {
+  width: 100%;
+  height: 280px;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  .chart-container {
+    height: 300px;
+  }
+  
+  .chart-container-small {
+    height: 250px;
+  }
+}
+```
+
+### 图表主题和样式
+
+#### 颜色配置
+
+项目使用统一的颜色主题：
+
+```javascript
+const CHART_COLORS = {
+  primary: '#409eff',    // 主色调
+  success: '#67c23a',    // 成功色
+  warning: '#e6a23c',    // 警告色
+  danger: '#f56c6c',     // 危险色
+  info: '#909399'        // 信息色
+}
+```
+
+#### 渐变效果
+
+```javascript
+// 线性渐变配置
+const getLinearGradient = (color1, color2) => {
+  return {
+    type: 'linear',
+    x: 0, y: 0, x2: 0, y2: 1,
+    colorStops: [
+      { offset: 0, color: color1 },
+      { offset: 1, color: color2 }
+    ]
+  }
+}
+```
+
+### 性能优化建议
+
+#### 1. 图表实例管理
+
+```javascript
+// 正确的实例销毁
+onUnmounted(() => {
+  chartInstance?.dispose()
+  chartInstance = null
+})
+```
+
+#### 2. 数据更新优化
+
+```javascript
+// 增量更新而非重新创建
+const updateChartData = (newData) => {
+  if (chartInstance) {
+    chartInstance.setOption({
+      series: [{
+        data: newData
+      }]
+    }, false, true) // 不合并，静默更新
+  }
+}
+```
+
+#### 3. 事件监听器清理
+
+```javascript
+// 确保清理所有事件监听器
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize)
+  chartInstance?.off('click') // 清理图表事件
+  chartInstance?.dispose()
+})
+```
+
+### 常见问题和解决方案
+
+#### 1. 图表不显示
+
+**原因**: 容器尺寸为0或初始化时机不当
+
+**解决方案**:
+```javascript
+// 确保在DOM渲染完成后初始化
+onMounted(async () => {
+  await nextTick()
+  initChart()
+})
+
+// 确保容器有明确的宽高
+.chart-container {
+  width: 100%;
+  height: 400px; /* 明确指定高度 */
+}
+```
+
+#### 2. 图表不响应容器尺寸变化
+
+**原因**: 未调用resize方法
+
+**解决方案**:
+```javascript
+// 监听所有可能的尺寸变化事件
+watch(
+  () => appStore.isSidebarCollapsed,
+  () => {
+    setTimeout(() => {
+      chartInstance?.resize()
+    }, 300)
+  }
+)
+```
+
+#### 3. 内存泄漏
+
+**原因**: 图表实例未正确销毁
+
+**解决方案**:
+```javascript
+// 组件销毁时清理资源
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize)
+  chartInstance?.dispose()
+  chartInstance = null
+})
+```
+
+### 扩展图表类型
+
+如需添加新的图表类型，请遵循以下步骤：
+
+1. **创建配置函数**:
+```javascript
+const getNewChartOption = () => {
+  return {
+    // ECharts配置
+  }
+}
+```
+
+2. **添加初始化逻辑**:
+```javascript
+if (newChartRef.value) {
+  newChart = echarts.init(newChartRef.value)
+  newChart.setOption(getNewChartOption())
+}
+```
+
+3. **包含在响应式处理中**:
+```javascript
+const handleResize = () => {
+  // 其他图表...
+  newChart?.resize()
+}
+```
+
+4. **添加销毁逻辑**:
+```javascript
+onUnmounted(() => {
+  // 其他清理...
+  newChart?.dispose()
+})
+```
+
 ## 扩展开发
 
 ### 添加新页面
