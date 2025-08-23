@@ -5,10 +5,6 @@
       <a href="javascript:void(0)" @click="clickHandler">操作</a>
     </template>
   </t-card>
-
-  <div>
-    <svg-icon name="dog" width="100px" height="100px" />
-  </div>
 </template>
 <script setup lang="jsx">
 import { MessagePlugin } from 'tdesign-vue-next';

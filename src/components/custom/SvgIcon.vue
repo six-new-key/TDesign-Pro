@@ -33,4 +33,11 @@ defineProps({
     },
 })
 </script>
-<style scoped></style>
+<style scoped>
+svg {
+  display: inline-block;
+  vertical-align: middle;
+  fill: currentColor;
+  overflow: hidden;
+}
+</style>
