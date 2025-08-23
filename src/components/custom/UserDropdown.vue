@@ -39,6 +39,9 @@
         </div>
       </div>
     </div>
+
+    <!-- 锁定屏幕对话框 -->
+    <LockScreenDialog v-model="showLockScreenDialog" @locked="handleLocked" />
   </div>
 </template>
 
@@ -46,6 +49,7 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/store/modules/user'
+import LockScreenDialog from '@/components/lock-screen/LockScreenDialog.vue'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -55,6 +59,9 @@ const userInfo = computed(() => userStore.userInfo || {})
 
 // 下拉菜单显示状态
 const isVisible = ref(false)
+
+// 锁定屏幕对话框显示状态
+const showLockScreenDialog = ref(false)
 
 // 切换下拉菜单显示状态
 const toggleDropdown = (event) => {
@@ -132,9 +139,14 @@ const handleMenuClick = (data) => {
 
 // 锁定屏幕
 const handleLockScreen = () => {
-  // 实现锁屏功能
-  console.log('锁定屏幕')
-  // 可以跳转到锁屏页面或显示锁屏模态框
+  showLockScreenDialog.value = true
+}
+
+// 处理锁定完成
+const handleLocked = (lockData) => {
+  console.log('屏幕已锁定:', lockData)
+  // 这里可以添加锁定后的逻辑，比如跳转到锁屏页面或设置应用状态
+  // 可以将锁定信息存储到store中
 }
 
 // 退出登录

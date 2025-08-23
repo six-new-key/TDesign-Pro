@@ -9,11 +9,15 @@ export const useAppStore = defineStore('app', () => {
   const sidebarTheme = ref('dark') // 菜单栏主题
   const shouldRefresh = ref(false) // 页面刷新标志
   const menuItems = ref([]) // 缓存的菜单项数据
+  const isLocked = ref(false) // 锁屏状态
+  const lockPassword = ref('') // 锁屏密码
   
   // getters
   const currentTitle = computed(() => title.value)
   const currentTheme = computed(() => theme.value)
   const currentSidebarTheme = computed(() => sidebarTheme.value)
+  const lockStatus = computed(() => isLocked.value)
+  const currentLockPassword = computed(() => lockPassword.value)
   
   // actions
   const setTitle = (newTitle) => {
@@ -43,6 +47,29 @@ export const useAppStore = defineStore('app', () => {
   // 初始化主题
   const initTheme = () => {
     document.documentElement.setAttribute('theme-mode', theme.value)
+  }
+
+  // 锁屏相关方法
+  const setLockStatus = (status) => {
+    isLocked.value = status
+  }
+
+  const lockScreen = () => {
+    isLocked.value = true
+  }
+
+  const unlockScreen = () => {
+    isLocked.value = false
+  }
+
+  // 设置锁屏密码
+  const setLockPassword = (password) => {
+    lockPassword.value = password
+  }
+
+  // 清除锁屏密码
+  const clearLockPassword = () => {
+    lockPassword.value = ''
   }
 
   // 刷新相关方法
@@ -108,15 +135,24 @@ export const useAppStore = defineStore('app', () => {
     sidebarTheme,
     shouldRefresh,
     menuItems,
+    isLocked,
+    lockPassword,
     currentTitle,
     currentTheme,
     currentSidebarTheme,
+    lockStatus,
+    currentLockPassword,
     setTitle,
     setTheme,
     setSidebarTheme,
     toggleTheme,
     toggleSidebarTheme,
     initTheme,
+    setLockStatus,
+    lockScreen,
+    unlockScreen,
+    setLockPassword,
+    clearLockPassword,
     triggerRefresh,
     resetRefresh,
     initMenuItems,
@@ -127,6 +163,6 @@ export const useAppStore = defineStore('app', () => {
     key: 'app-store',
     storage: localStorage,
     //只有添加到里面才会持久化
-    paths: ['title', 'theme', 'sidebarTheme']
+    paths: ['title', 'theme', 'sidebarTheme', 'isLocked', 'lockPassword']
   }
 })

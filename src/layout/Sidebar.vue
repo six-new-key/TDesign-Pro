@@ -60,7 +60,7 @@
         <div class="sidebar-operations">
           <!-- 收缩按钮 -->
           <t-tooltip :content="collapsed ? '展开' : '收缩'">
-            <t-button shape="square" variant="text" @click="toggleSidebar" :style="{ color: getTextColor() }">
+            <t-button shape="square" variant="text" ghost @click="toggleSidebar" :style="{ color: getTextColor() }">
               <template #icon>
                 <t-icon name="view-list" />
               </template>
@@ -69,7 +69,7 @@
 
           <!-- 菜单栏主题切换按钮 -->
           <t-tooltip v-if="!collapsed" :content="sidebarTheme === 'dark' ? '明亮' : '暗黑'">
-            <t-button shape="square" variant="text" @click="toggleSidebarTheme" :style="{ color: getTextColor() }">
+            <t-button shape="square" variant="text" ghost @click="toggleSidebarTheme" :style="{ color: getTextColor() }">
               <template #icon>
                 <t-icon :name="sidebarTheme === 'dark' ? 'sunny' : 'moon'" />
               </template>
@@ -138,12 +138,12 @@ const toggleSidebarTheme = () => {
 
 // 获取文字颜色：优先考虑全局主题，然后考虑菜单栏主题
 const getTextColor = () => {
-  // 如果全局主题是dark，文字应该是白色
+  // 如果全局主题是dark，使用暗色主题的文字颜色
   if (globalTheme.value === 'dark') {
-    return '#ffffff'
+    return 'var(--td-text-color-primary)'
   }
   // 如果全局主题是light，根据菜单栏主题决定颜色
-  return sidebarTheme.value === 'dark' ? '#ffffff' : '#000000'
+  return sidebarTheme.value === 'dark' ? 'var(--td-text-color-anti)' : 'var(--td-text-color-primary)'
 }
 
 // 处理菜单点击

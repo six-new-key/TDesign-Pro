@@ -1,13 +1,17 @@
 <template>
-  <t-layout class="main-layout">
+  <!-- 锁屏状态下显示全屏锁定界面 -->
+  <FullScreenLock v-if="appStore.lockStatus" />
+
+  <!-- 正常布局 -->
+  <t-layout v-else class="main-layout">
     <!-- 左侧：侧边导航 -->
     <Sidebar />
-    
+
     <!-- 右侧：Header + 主内容区域 -->
     <t-layout class="right-layout">
       <!-- 顶部导航 -->
       <Header />
-      
+
       <!-- 内容区域 -->
       <t-content class="main-content">
         <router-view v-slot="{ Component, route }">
@@ -25,6 +29,7 @@ import { watch, nextTick, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import Header from './Header.vue'
 import Sidebar from './Sidebar.vue'
+import FullScreenLock from '@/components/lock-screen/FullScreenLock.vue'
 import { useAppStore } from '@/store/modules/app'
 
 const route = useRoute()
@@ -32,7 +37,6 @@ const appStore = useAppStore()
 
 // 控制组件重新渲染的key
 const componentKey = ref(0)
-
 // 监听路由变化
 watch(
   () => route.path,
