@@ -120,7 +120,7 @@ export const constantRoutes = [
                 component: () => import('@/views/content/article/ArticleCategory.vue'),
                 meta: {
                   title: '文章分类',
-                  icon: 'folder',
+                  icon: 'chart-3d',
                   hide: false
                 }
               }
@@ -132,7 +132,7 @@ export const constantRoutes = [
             redirect: '/content/media/images',
             meta: {
               title: '媒体管理',
-              icon: 'image',
+              icon: 'brightness',
               hide: false
             },
             children: [
@@ -142,7 +142,7 @@ export const constantRoutes = [
                 component: () => import('@/views/content/media/MediaImages.vue'),
                 meta: {
                   title: '图片管理',
-                  icon: 'image',
+                  icon: 'face-retouching',
                   hide: false
                 }
               },
@@ -152,7 +152,7 @@ export const constantRoutes = [
                 component: () => import('@/views/content/media/MediaVideos.vue'),
                 meta: {
                   title: '视频管理',
-                  icon: 'video',
+                  icon: 'markup',
                   hide: false
                 }
               }
@@ -167,7 +167,7 @@ export const constantRoutes = [
         redirect: '/system/config',
         meta: {
           title: '系统管理',
-          icon: 'tools',
+          icon: 'setting-1',
           hide: false
         },
         children: [
@@ -177,7 +177,7 @@ export const constantRoutes = [
             component: () => import('@/views/system/SystemConfig.vue'),
             meta: {
               title: '系统配置',
-              icon: 'tools',
+              icon: 'palette',
               hide: false
             }
           },
@@ -187,7 +187,7 @@ export const constantRoutes = [
             component: () => import('@/views/system/SystemLogs.vue'),
             meta: {
               title: '系统日志',
-              icon: 'file-text-1',
+              icon: 'pause-circle-stroke',
               hide: false
             }
           },
@@ -197,7 +197,7 @@ export const constantRoutes = [
             component: () => import('@/views/system/SystemBackup.vue'),
             meta: {
               title: '数据备份',
-              icon: 'cloud-download',
+              icon: 'gesture-applause',
               hide: false
             }
           }
@@ -210,7 +210,7 @@ export const constantRoutes = [
         redirect: '/finance/income',
         meta: {
           title: '财务管理',
-          icon: 'money-circle',
+          icon: 'chart-pie',
           hide: false
         },
         children: [
@@ -220,7 +220,7 @@ export const constantRoutes = [
             component: () => import('@/views/finance/FinanceIncome.vue'),
             meta: {
               title: '收入管理',
-              icon: 'money-circle',
+              icon: 'application',
               hide: false
             }
           },
@@ -230,7 +230,7 @@ export const constantRoutes = [
             component: () => import('@/views/finance/FinanceExpense.vue'),
             meta: {
               title: '支出管理',
-              icon: 'remove',
+              icon: 'arrow-right-circle',
               hide: false
             }
           },
@@ -263,7 +263,7 @@ export const constantRoutes = [
             component: () => import('@/views/marketing/MarketingCampaign.vue'),
             meta: {
               title: '营销活动',
-              icon: 'notification',
+              icon: 'chevron-up-circle',
               hide: false
             }
           },

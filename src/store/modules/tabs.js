@@ -4,7 +4,7 @@ export const useTabsStore = defineStore('tabs', {
   state: () => ({
     visitedPages: [
       // 首页标签永远存在且在第一位
-      { path: '/home', title: '首页', isHome: true, timestamp: 0 }
+      { path: '/home', title: '首页', icon: 'home', isHome: true, timestamp: 0 }
     ]
   }),
 
@@ -18,7 +18,7 @@ export const useTabsStore = defineStore('tabs', {
     initHomePage() {
       const homePage = this.visitedPages.find(p => p.isHome)
       if (!homePage) {
-        this.visitedPages.unshift({ path: '/home', title: '首页', isHome: true, timestamp: 0 })
+        this.visitedPages.unshift({ path: '/home', title: '首页', icon: 'home', isHome: true, timestamp: 0 })
       }
     },
 
@@ -37,6 +37,7 @@ export const useTabsStore = defineStore('tabs', {
         this.visitedPages.push({
           path: page.path,
           title: page.title,
+          icon: page.icon,
           isHome: false,
           timestamp: Date.now()
         })

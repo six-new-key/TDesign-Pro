@@ -15,6 +15,9 @@
           @click="navigateToPage(page.path)" :variant="page.path === route.path ? 'primary' : 'default'"
           :theme="page.path === route.path ? 'primary' : 'default'" class="page-tag"
           :class="{ 'page-tag--active': page.path === route.path, 'page-tag--home': page.isHome }">
+          <template #icon>
+            <icon-font :name="page.icon" size="15px" style="margin-right: 5px;margin-bottom: 5px;" />
+          </template>
           <span class="page-tag__text">{{ page.title }}</span>
         </t-tag>
       </div>
@@ -30,6 +33,7 @@
 
 <script setup>
 import { ref, computed, watch, nextTick, onMounted, onUnmounted } from 'vue'
+import { IconFont } from 'tdesign-icons-vue-next';
 import { useRouter, useRoute } from 'vue-router'
 import { useTabsStore } from '@/store/modules/tabs'
 
@@ -43,8 +47,8 @@ const tagsContainer = ref(null)
 const showScrollButtons = ref(false)
 
 // 添加页面到标签列表
-const addPageTag = (path, title) => {
-  tabsStore.addPageTag({ path, title })
+const addPageTag = (path, title, icon) => {
+  tabsStore.addPageTag({ path, title, icon })
 }
 
 // 移除页面标签
@@ -106,7 +110,7 @@ watch(
     if (route.meta?.title) {
       document.title = `${route.meta.title} - 微信公众号管理系统`
       // 添加页面到标签列表
-      addPageTag(newPath, route.meta.title)
+      addPageTag(newPath, route.meta.title, route.meta.icon)
       // 滚动到当前激活的标签
       scrollToActiveTag()
     }

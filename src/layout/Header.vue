@@ -6,6 +6,9 @@
         <!-- 面包屑导航 -->
         <t-breadcrumb class="breadcrumb">
           <t-breadcrumb-item v-for="item in breadcrumbItems" :key="item.path" :to="item.path">
+            <template #icon>
+              <icon-font :name="item.icon" size="15px" style="margin-top: 2px;" />
+            </template>
             {{ item.title }}
           </t-breadcrumb-item>
         </t-breadcrumb>
@@ -94,7 +97,7 @@ const breadcrumbItems = computed(() => {
 
   // 总是添加首页作为第一项（除非当前就是首页）
   if (route.path !== '/' && route.path !== '/home') {
-    items.push({ title: '首页', path: '/home' })
+    items.push({ title: '首页', path: '/home', icon: 'home' })
   }
 
   // 添加路由层级中的每一级
@@ -110,7 +113,8 @@ const breadcrumbItems = computed(() => {
 
     items.push({
       title: match.meta.title,
-      path: itemPath
+      path: itemPath,
+      icon: match.meta.icon
     })
   })
 
