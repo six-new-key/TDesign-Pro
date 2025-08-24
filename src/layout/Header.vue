@@ -25,7 +25,7 @@
           <t-tooltip content="刷新">
             <t-button theme="default" shape="square" variant="text" @click="handleRefresh">
               <template #icon>
-                <t-icon name="refresh" />
+                <IconFont name="refresh" size="15px" />
               </template>
             </t-button>
           </t-tooltip>
@@ -64,6 +64,7 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { IconFont } from 'tdesign-icons-vue-next';
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '@/store/modules/user'
 import { useAppStore } from '@/store/modules/app'

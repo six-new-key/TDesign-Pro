@@ -15,7 +15,7 @@
         <!-- 一层菜单 -->
         <t-menu-item v-if="!route.children" :value="route.path">
           <template #icon>
-            <t-icon :name="route.meta?.icon || 'default'" />
+            <icon-font :name="route.meta?.icon || 'default'" size="17px" style="margin-top: 4px;" />
           </template>
           {{ route.meta?.title || route.name }}
         </t-menu-item>
@@ -24,11 +24,11 @@
         <t-submenu v-else-if="route.children && !hasThirdLevel(route)" :value="route.path"
           :title="route.meta?.title || route.name">
           <template #icon>
-            <t-icon :name="route.meta?.icon || 'default'" />
+            <icon-font :name="route.meta?.icon || 'default'" size="17px" style="margin-top: 4px;" />
           </template>
           <t-menu-item v-for="child in route.children" :key="child.name" :value="child.path">
             <template #icon>
-              <t-icon :name="child.meta?.icon || 'default'" />
+              <icon-font :name="child.meta?.icon || 'default'" size="17px" style="margin-top: 4px;" />
             </template>
             {{ child.meta?.title || child.name }}
           </t-menu-item>
@@ -38,16 +38,16 @@
         <t-submenu v-else-if="route.children && hasThirdLevel(route)" :value="route.path"
           :title="route.meta?.title || route.name">
           <template #icon>
-            <t-icon :name="route.meta?.icon || 'default'" />
+            <icon-font :name="route.meta?.icon || 'default'" size="17px" style="margin-top: 4px;" />
           </template>
           <template v-for="child in route.children" :key="child.name">
             <t-submenu :value="child.path" :title="child.meta?.title || child.name">
               <template #icon>
-                <t-icon :name="child.meta?.icon || 'default'" />
+                <icon-font :name="child.meta?.icon || 'default'" size="17px" style="margin-top: 4px;" />
               </template>
               <t-menu-item v-for="grandChild in child.children" :key="grandChild.name" :value="grandChild.path">
                 <template #icon>
-                  <t-icon :name="grandChild.meta?.icon || 'default'" />
+                  <icon-font :name="grandChild.meta?.icon || 'default'" size="17px" style="margin-top: 4px;" />
                 </template>
                 {{ grandChild.meta?.title || grandChild.name }}
               </t-menu-item>
@@ -83,6 +83,7 @@
 
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue'
+import { IconFont } from 'tdesign-icons-vue-next';
 import { useRouter, useRoute } from 'vue-router'
 import { useAppStore } from '@/store/modules/app'
 import { constantRoutes } from '@/router/routes'
