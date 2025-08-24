@@ -33,11 +33,11 @@
             </t-button>
           </t-tooltip>
 
-          <!-- 全局主题切换 -->
-          <t-tooltip :content="appStore.theme === 'dark' ? '明亮模式' : '暗黑模式'">
-            <t-button theme="default" shape="square" variant="text" @click="toggleGlobalTheme">
+          <!-- 主题设置 -->
+          <t-tooltip content="主题设置">
+            <t-button theme="default" shape="square" variant="text" @click="openThemeDrawer">
               <template #icon>
-                <t-icon :name="appStore.theme === 'dark' ? 'sunny' : 'moon'" />
+                <t-icon name="palette" />
               </template>
             </t-button>
           </t-tooltip>
@@ -63,6 +63,9 @@
 
   <!-- 搜索对话框组件 -->
   <SearchDialog v-model="showSearchDialog" />
+  
+  <!-- 主题设置抽屉 -->
+  <ThemeDrawer v-model="showThemeDrawer" />
 </template>
 
 <script setup>
@@ -74,6 +77,7 @@ import { useAppStore } from '@/store/modules/app'
 import PageTags from '@/components/page-tags/PageTags.vue'
 import SearchDialog from '@/components/search-dialog/SearchDialog.vue'
 import UserDropdown from '@/components/custom/UserDropdown.vue'
+import ThemeDrawer from '@/components/custom/ThemeDrawer.vue'
 
 
 const router = useRouter()
@@ -84,6 +88,9 @@ const appStore = useAppStore()
 
 // 搜索相关
 const showSearchDialog = ref(false)
+
+// 主题设置相关
+const showThemeDrawer = ref(false)
 
 // 全屏相关
 const isFullscreen = ref(false)
@@ -128,6 +135,11 @@ const openSearchDialog = () => {
   showSearchDialog.value = true
 }
 
+// 打开主题设置抽屉
+const openThemeDrawer = () => {
+  showThemeDrawer.value = true
+}
+
 // 刷新页面
 const handleRefresh = () => {
   appStore.triggerRefresh()
@@ -158,10 +170,7 @@ onUnmounted(() => {
   document.removeEventListener('fullscreenchange', handleFullscreenChange)
 })
 
-// 切换全局主题
-const toggleGlobalTheme = () => {
-  appStore.toggleTheme()
-}
+
 
 
 </script>

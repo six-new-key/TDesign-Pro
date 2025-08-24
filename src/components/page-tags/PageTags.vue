@@ -14,7 +14,7 @@
           :closable="!page.isHome && visitedPages.length > 1" @close="removePageTag(page.path)"
           @click="navigateToPage(page.path)" :variant="page.path === route.path ? 'primary' : 'default'"
           :theme="page.path === route.path ? 'primary' : 'default'" class="page-tag"
-          :class="{ 'page-tag--active': page.path === route.path, 'page-tag--home': page.isHome }">
+          :class="{ 'page-tag--active': page.path === route.path}">
           <template #icon>
             <icon-font :name="page.icon" size="15px" style="margin-right: 5px;margin-bottom: 5px;" />
           </template>
@@ -249,13 +249,8 @@ onUnmounted(() => {
 }
 
 .page-tag--active {
-  background: var(--td-brand-color-light) !important;
+  background: var(--td-brand-color-1);
   color: var(--td-brand-color) !important;
-  border-color: var(--td-brand-color-light) !important;
-}
-
-.page-tag--home {
-  font-weight: 600;
 }
 
 .page-tag__text {

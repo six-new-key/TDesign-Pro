@@ -1,12 +1,27 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { constantRoutes } from '@/router/routes'
+import { 
+  THEME_MODE, 
+  PRESET_COLORS, 
+  setThemeMode as applyThemeMode,
+  applyPrimaryColor,
+  applyTheme, 
+  getThemeFromStorage, 
+  saveThemeToStorage,
+  getSystemThemeMode,
+  watchSystemThemeChange
+} from '@/utils/theme'
 
 export const useAppStore = defineStore('app', () => {
   // state
   const title = ref('')
-  const theme = ref('light') // 全局主题
   const sidebarTheme = ref('dark') // 菜单栏主题
+  
+  // 新的主题系统状态
+  const themeMode = ref(THEME_MODE.AUTO) // 主题模式: light, dark, auto
+  const primaryColor = ref(PRESET_COLORS.blue) // 主色调
+  const actualThemeMode = ref('light') // 实际应用的主题模式
   const sidebarCollapsed = ref(false) // 侧边栏折叠状态
   const shouldRefresh = ref(false) // 页面刷新标志
   const menuItems = ref([]) // 缓存的菜单项数据
@@ -15,31 +30,83 @@ export const useAppStore = defineStore('app', () => {
   
   // getters
   const currentTitle = computed(() => title.value)
-  const currentTheme = computed(() => theme.value)
   const currentSidebarTheme = computed(() => sidebarTheme.value)
   const isSidebarCollapsed = computed(() => sidebarCollapsed.value)
   const lockStatus = computed(() => isLocked.value)
   const currentLockPassword = computed(() => lockPassword.value)
+  
+  // 新的主题系统 getters
+  const currentThemeMode = computed(() => themeMode.value)
+  const currentPrimaryColor = computed(() => primaryColor.value)
+  const currentActualThemeMode = computed(() => actualThemeMode.value)
+  const isDarkMode = computed(() => actualThemeMode.value === 'dark')
+  const isAutoMode = computed(() => themeMode.value === THEME_MODE.AUTO)
   
   // actions
   const setTitle = (newTitle) => {
     title.value = newTitle
   }
   
-  const setTheme = (newTheme) => {
-    theme.value = newTheme
-    // 设置HTML元素的theme-mode属性
-    document.documentElement.setAttribute('theme-mode', newTheme)
+
+  
+  // 新的主题系统方法
+  const setThemeMode = (mode) => {
+    themeMode.value = mode
+    updateActualThemeMode()
+    saveThemeConfig()
+  }
+  
+  const setPrimaryColor = (color) => {
+    primaryColor.value = color
+    applyPrimaryColor(color)
+    saveThemeConfig()
+  }
+  
+  const updateActualThemeMode = () => {
+    let newActualMode = themeMode.value
+    
+    if (themeMode.value === THEME_MODE.AUTO) {
+      newActualMode = getSystemThemeMode()
+    }
+    
+    actualThemeMode.value = newActualMode
+    applyThemeMode(newActualMode)
+  }
+  
+  const applyCurrentTheme = () => {
+    applyThemeMode(actualThemeMode.value)
+    applyPrimaryColor(primaryColor.value)
+  }
+  
+  const saveThemeConfig = () => {
+    saveThemeToStorage({
+      mode: themeMode.value,
+      primaryColor: primaryColor.value
+    })
+  }
+  
+  const loadThemeConfig = () => {
+    const config = getThemeFromStorage()
+    themeMode.value = config.mode
+    primaryColor.value = config.primaryColor
+    updateActualThemeMode()
+  }
+  
+  const toggleThemeMode = () => {
+    if (themeMode.value === THEME_MODE.LIGHT) {
+      setThemeMode(THEME_MODE.DARK)
+    } else if (themeMode.value === THEME_MODE.DARK) {
+      setThemeMode(THEME_MODE.AUTO)
+    } else {
+      setThemeMode(THEME_MODE.LIGHT)
+    }
   }
   
   const setSidebarTheme = (newTheme) => {
     sidebarTheme.value = newTheme
   }
   
-  const toggleTheme = () => {
-    const newTheme = theme.value === 'dark' ? 'light' : 'dark'
-    setTheme(newTheme)
-  }
+
   
   const toggleSidebarTheme = () => {
     const newTheme = sidebarTheme.value === 'dark' ? 'light' : 'dark'
@@ -54,9 +121,21 @@ export const useAppStore = defineStore('app', () => {
     sidebarCollapsed.value = !sidebarCollapsed.value
   }
   
-  // 初始化主题
-  const initTheme = () => {
-    document.documentElement.setAttribute('theme-mode', theme.value)
+
+  
+  const initNewThemeSystem = () => {
+    // 加载保存的主题配置
+    loadThemeConfig()
+    
+    // 如果是自动模式，监听系统主题变化
+    if (themeMode.value === THEME_MODE.AUTO) {
+      watchSystemThemeChange((systemMode) => {
+        if (themeMode.value === THEME_MODE.AUTO) {
+          actualThemeMode.value = systemMode
+          applyCurrentTheme()
+        }
+      })
+    }
   }
 
   // 锁屏相关方法
@@ -141,27 +220,38 @@ export const useAppStore = defineStore('app', () => {
   
   return {
     title,
-    theme,
     sidebarTheme,
     sidebarCollapsed,
     shouldRefresh,
     menuItems,
     isLocked,
     lockPassword,
+    themeMode,
+    primaryColor,
+    actualThemeMode,
     currentTitle,
-    currentTheme,
     currentSidebarTheme,
     isSidebarCollapsed,
     lockStatus,
     currentLockPassword,
+    currentThemeMode,
+    currentPrimaryColor,
+    currentActualThemeMode,
+    isDarkMode,
+    isAutoMode,
     setTitle,
-    setTheme,
     setSidebarTheme,
-    toggleTheme,
     toggleSidebarTheme,
     setSidebarCollapsed,
     toggleSidebarCollapsed,
-    initTheme,
+    setThemeMode,
+    setPrimaryColor,
+    toggleThemeMode,
+    updateActualThemeMode,
+    applyCurrentTheme,
+    saveThemeConfig,
+    loadThemeConfig,
+    initNewThemeSystem,
     setLockStatus,
     lockScreen,
     unlockScreen,
@@ -177,6 +267,6 @@ export const useAppStore = defineStore('app', () => {
     key: 'app-store',
     storage: localStorage,
     //只有添加到里面才会持久化
-    paths: ['title', 'theme', 'sidebarTheme', 'sidebarCollapsed', 'isLocked', 'lockPassword']
+    paths: ['title', 'sidebarTheme', 'sidebarCollapsed', 'isLocked', 'lockPassword', 'themeMode', 'primaryColor']
   }
 })

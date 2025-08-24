@@ -3,7 +3,16 @@
 </template>
 
 <script setup>
-// 不需要导入任何组件，router-view会根据路由配置动态渲染
+import { onMounted } from 'vue'
+import { useAppStore } from '@/store/modules/app'
+
+const appStore = useAppStore()
+
+// 组件挂载时初始化主题系统
+onMounted(() => {
+  // 初始化新的主题系统
+  appStore.initNewThemeSystem()
+})
 </script>
 
 <style scoped>

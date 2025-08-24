@@ -200,6 +200,16 @@ export const constantRoutes = [
               icon: 'gesture-applause',
               hide: false
             }
+          },
+          {
+            path: '/system/theme',
+            name: 'SystemTheme',
+            component: () => import('@/views/system/theme/index.vue'),
+            meta: {
+              title: '主题设置',
+              icon: 'palette',
+              hide: false
+            }
           }
         ]
       },

@@ -217,9 +217,7 @@ watch(() => route.path, (newPath) => {
   expandedKeys.value = [...new Set(expandedPaths)] // 去重
 }, { immediate: true })
 
-onMounted(() => {
-  appStore.initTheme()
-})
+
 </script>
 
 <style scoped>
