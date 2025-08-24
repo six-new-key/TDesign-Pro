@@ -36,7 +36,7 @@
           <div class="unlock-avatar">
             <div class="avatar-emoji">🤓</div>
           </div>
-          <div class="unlock-username">{{ userInfo.name || 'Vben' }}</div>
+          <div class="unlock-username">{{ userInfo.name || 'TDesign Pro' }}</div>
         </div>
       </template>
 

@@ -7,7 +7,7 @@
         <div class="logo-section" :class="{ 'logo-section-collapsed': collapsed }">
           <img src="/vite.svg" alt="Logo" class="logo" />
           <span v-if="!collapsed" class="system-title" :class="`system-title--${sidebarTheme}`"
-            :style="{ color: getTextColor() }">微信公众号管理后台</span>
+            :style="{ color: getTextColor() }">TDesign Pro</span>
         </div>
       </template>
       <!-- 动态渲染菜单 -->

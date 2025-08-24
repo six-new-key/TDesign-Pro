@@ -17,7 +17,7 @@
                 </div>
                 <!-- 用户名 -->
                 <div class="username">
-                    {{ userInfo.name || 'Vben' }}
+                    {{ userInfo.name || 'TDesign Pro' }}
                 </div>
             </div>
 

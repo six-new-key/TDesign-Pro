@@ -42,7 +42,7 @@ watch(
   () => route.path,
   (newPath) => {
     // 更新页面标题
-    const title = route.meta?.title || '微信公众号管理后台'
+    const title = route.meta?.title || 'TDesign Pro'
     appStore.setTitle(title)
     document.title = title
   },

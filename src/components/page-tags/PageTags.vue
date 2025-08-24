@@ -108,7 +108,7 @@ watch(
   (newPath) => {
     // 更新页面标题
     if (route.meta?.title) {
-      document.title = `${route.meta.title} - 微信公众号管理系统`
+      document.title = `${route.meta.title} - TDesign Pro`
       // 添加页面到标签列表
       addPageTag(newPath, route.meta.title, route.meta.icon)
       // 滚动到当前激活的标签
