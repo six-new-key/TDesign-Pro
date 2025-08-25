@@ -42,6 +42,9 @@
 
     <!-- 锁定屏幕对话框 -->
     <LockScreenDialog v-model="showLockScreenDialog" @locked="handleLocked" />
+
+    <!-- 退出登录确认对话框 -->
+    <LogoutConfirmDialog v-model="showLogoutConfirmDialog" @confirm="handleLogout" />
   </div>
 </template>
 
@@ -50,6 +53,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/store/modules/user'
 import LockScreenDialog from '@/components/lock-screen/LockScreenDialog.vue'
+import LogoutConfirmDialog from '@/components/custom/LogoutConfirmDialog.vue'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -62,6 +66,9 @@ const isVisible = ref(false)
 
 // 锁定屏幕对话框显示状态
 const showLockScreenDialog = ref(false)
+
+// 退出登录确认对话框显示状态
+const showLogoutConfirmDialog = ref(false)
 
 // 切换下拉菜单显示状态
 const toggleDropdown = (event) => {
@@ -89,7 +96,7 @@ const getMenuIcon = (value) => {
 // 菜单选项
 const menuOptions = [
   {
-    content: '使用明文档',
+    content: '使用文档',
     value: 'docs'
   },
   {
@@ -132,7 +139,7 @@ const handleMenuClick = (data) => {
       handleLockScreen()
       break
     case 'logout':
-      handleLogout()
+      showLogoutConfirmDialog.value = true
       break
   }
 }
@@ -150,9 +157,21 @@ const handleLocked = (lockData) => {
 }
 
 // 退出登录
-const handleLogout = () => {
-  userStore.logout()
-  router.push('/login')
+const handleLogout = async () => {
+  try {
+    // 清除用户状态
+    await userStore.logout()
+
+    // 跳转到登录页面
+    router.push('/login')
+
+    // 显示退出成功提示
+    console.log('退出登录成功')
+  } catch (error) {
+    console.error('退出登录失败:', error)
+    // 即使退出失败，也强制跳转到登录页面
+    router.push('/login')
+  }
 }
 
 // 键盘快捷键处理
@@ -165,7 +184,7 @@ const handleKeydown = (event) => {
         break
       case 'q':
         event.preventDefault()
-        handleLogout()
+        showLogoutConfirmDialog.value = true
         break
     }
   }
