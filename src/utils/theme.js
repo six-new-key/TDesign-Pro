@@ -7,10 +7,6 @@ export const THEME_MODE = {
   AUTO: 'auto'
 }
 
-
-
-
-
 /**
  * 设置主题模式
  * @param {string} mode - 主题模式 ('light' | 'dark')
@@ -25,8 +21,6 @@ export function setThemeMode(mode) {
     root.setAttribute('theme-mode', mode)
   }
 }
-
-
 
 /**
  * 应用主题配置
