@@ -13,10 +13,23 @@ export const useUserStore = defineStore('user', () => {
     userInfo.value = info
   }
   
+  const logout = async () => {
+    // 清除用户信息
+    userInfo.value = null
+    
+    // 这里可以添加调用后端退出登录API的逻辑
+    // try {
+    //   await api.logout()
+    // } catch (error) {
+    //   console.error('调用退出登录API失败:', error)
+    // }
+  }
+  
   return {
     userInfo,
     username,
-    setUserInfo
+    setUserInfo,
+    logout
   }
 }, {
   persist: {
