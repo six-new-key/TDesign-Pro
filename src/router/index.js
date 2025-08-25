@@ -6,7 +6,7 @@ const router = createRouter({
   history: createWebHistory(),
   routes: [...constantRoutes, ...asyncRoutes, ...anyRoutes],
   // 路由滚动行为
-  scrollBehavior(to, from, savedPosition) {
+  scrollBehavior(savedPosition) {
     if (savedPosition) {
       return savedPosition
     } else {

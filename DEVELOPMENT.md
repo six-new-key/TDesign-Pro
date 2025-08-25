@@ -720,7 +720,7 @@ meta: {
 // 一层菜单
 {
   path: '/home',
-  component: () => import('@/views/home/Home.vue'),
+  component: () => import('@/views/home/Index.vue'),
   meta: { title: '首页', icon: 'home' }
 }
 
@@ -731,9 +731,9 @@ meta: {
   meta: { title: '用户管理', icon: 'user' },
   children: [
     {
-      path: '/user/list',
-      component: () => import('@/views/user/UserList.vue'),
-      meta: { title: '用户列表', icon: 'usergroup' }
+      path: '/permission/user',
+      component: () => import('@/views/permission/user/Index.vue'),
+      meta: { title: '用户管理', icon: 'usergroup' }
     }
   ]
 }
