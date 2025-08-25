@@ -1,19 +1,10 @@
 <template>
-    <t-drawer v-model:visible="visible" title="主题设置" placement="right" size="330px" :show-overlay="true"
+    <t-drawer v-model:visible="visible" title="主题设置" placement="right" size="320px" :show-overlay="true"
         :close-on-overlay-click="true" :footer="true" class="theme-drawer">
-        <template #footer>
-            <div class="theme-actions">
-
-                <t-button theme="primary" @click="handleApply" size="medium" class="action-button">
-                    应用主题
-                </t-button>
-            </div>
-        </template>
         <div class="theme-drawer-content">
             <!-- 主题模式设置 -->
             <div class="setting-section">
                 <h4 class="section-title">
-                    <t-icon name="palette" class="section-icon" />
                     主题模式
                 </h4>
                 <div class="theme-mode-options">
@@ -26,9 +17,16 @@
                     </div>
                 </div>
             </div>
-
-
         </div>
+
+        <template #footer>
+            <div class="theme-actions">
+
+                <t-button theme="primary" @click="handleApply" size="medium" class="action-button">
+                    应用主题
+                </t-button>
+            </div>
+        </template>
     </t-drawer>
 </template>
 
@@ -102,8 +100,13 @@ defineExpose({
     flex-direction: column;
 }
 
+/* 隐藏滚动条 */
+.theme-drawer-content::-webkit-scrollbar {
+    display: none;
+}
+
 .setting-section {
-    padding: 20px;
+    padding: 0;
     border-bottom: 1px solid var(--td-border-level-1-color);
 }
 
@@ -115,8 +118,7 @@ defineExpose({
 .section-title {
     display: flex;
     align-items: center;
-    margin: 0 0 16px 0;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: bold;
     color: var(--td-text-color-primary);
 }
@@ -131,6 +133,7 @@ defineExpose({
     display: flex;
     flex-direction: column;
     gap: 8px;
+    padding: 15px;
 }
 
 .theme-mode-item {

@@ -28,7 +28,7 @@
           <t-tooltip content="刷新">
             <t-button theme="default" shape="square" variant="text" @click="handleRefresh">
               <template #icon>
-                <IconFont name="refresh" size="15px" />
+                <IconFont name="refresh" size="14px" />
               </template>
             </t-button>
           </t-tooltip>
@@ -37,7 +37,7 @@
           <t-tooltip content="主题设置">
             <t-button theme="default" shape="square" variant="text" @click="openThemeDrawer">
               <template #icon>
-                <t-icon name="palette" />
+                <t-icon name="setting" />
               </template>
             </t-button>
           </t-tooltip>
