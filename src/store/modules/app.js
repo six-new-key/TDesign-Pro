@@ -3,10 +3,7 @@ import { ref, computed } from 'vue'
 import { constantRoutes } from '@/router/routes'
 import { 
   THEME_MODE, 
-  PRESET_COLORS, 
   setThemeMode as applyThemeMode,
-  applyPrimaryColor,
-  applyTheme, 
   getThemeFromStorage, 
   saveThemeToStorage,
   getSystemThemeMode,
@@ -19,8 +16,7 @@ export const useAppStore = defineStore('app', () => {
   const sidebarTheme = ref('dark') // 菜单栏主题
   
   // 新的主题系统状态
-  const themeMode = ref(THEME_MODE.AUTO) // 主题模式: light, dark, auto
-  const primaryColor = ref(PRESET_COLORS.blue) // 主色调
+  const themeMode = ref(THEME_MODE.LIGHT) // 主题模式: light, dark, auto
   const actualThemeMode = ref('light') // 实际应用的主题模式
   const sidebarCollapsed = ref(false) // 侧边栏折叠状态
   const shouldRefresh = ref(false) // 页面刷新标志
@@ -37,7 +33,6 @@ export const useAppStore = defineStore('app', () => {
   
   // 新的主题系统 getters
   const currentThemeMode = computed(() => themeMode.value)
-  const currentPrimaryColor = computed(() => primaryColor.value)
   const currentActualThemeMode = computed(() => actualThemeMode.value)
   const isDarkMode = computed(() => actualThemeMode.value === 'dark')
   const isAutoMode = computed(() => themeMode.value === THEME_MODE.AUTO)
@@ -47,18 +42,10 @@ export const useAppStore = defineStore('app', () => {
     title.value = newTitle
   }
   
-
-  
   // 新的主题系统方法
   const setThemeMode = (mode) => {
     themeMode.value = mode
     updateActualThemeMode()
-    saveThemeConfig()
-  }
-  
-  const setPrimaryColor = (color) => {
-    primaryColor.value = color
-    applyPrimaryColor(color)
     saveThemeConfig()
   }
   
@@ -75,20 +62,17 @@ export const useAppStore = defineStore('app', () => {
   
   const applyCurrentTheme = () => {
     applyThemeMode(actualThemeMode.value)
-    applyPrimaryColor(primaryColor.value)
   }
   
   const saveThemeConfig = () => {
     saveThemeToStorage({
-      mode: themeMode.value,
-      primaryColor: primaryColor.value
+      mode: themeMode.value
     })
   }
   
   const loadThemeConfig = () => {
     const config = getThemeFromStorage()
     themeMode.value = config.mode
-    primaryColor.value = config.primaryColor
     updateActualThemeMode()
   }
   
@@ -227,7 +211,6 @@ export const useAppStore = defineStore('app', () => {
     isLocked,
     lockPassword,
     themeMode,
-    primaryColor,
     actualThemeMode,
     currentTitle,
     currentSidebarTheme,
@@ -235,7 +218,6 @@ export const useAppStore = defineStore('app', () => {
     lockStatus,
     currentLockPassword,
     currentThemeMode,
-    currentPrimaryColor,
     currentActualThemeMode,
     isDarkMode,
     isAutoMode,
@@ -245,7 +227,6 @@ export const useAppStore = defineStore('app', () => {
     setSidebarCollapsed,
     toggleSidebarCollapsed,
     setThemeMode,
-    setPrimaryColor,
     toggleThemeMode,
     updateActualThemeMode,
     applyCurrentTheme,
@@ -267,6 +248,6 @@ export const useAppStore = defineStore('app', () => {
     key: 'app-store',
     storage: localStorage,
     //只有添加到里面才会持久化
-    paths: ['title', 'sidebarTheme', 'sidebarCollapsed', 'isLocked', 'lockPassword', 'themeMode', 'primaryColor']
+    paths: ['title', 'sidebarTheme', 'sidebarCollapsed', 'isLocked', 'lockPassword', 'themeMode']
   }
 })

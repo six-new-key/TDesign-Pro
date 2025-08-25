@@ -8,6 +8,7 @@ import App from './App.vue'
 import 'virtual:svg-icons-register'
 //引入自定义插件用来注册全局组件
 import globalComponent from "@/plugins";
+
 // 引入主题系统
 const app = createApp(App)
 

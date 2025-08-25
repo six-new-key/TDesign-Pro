@@ -69,7 +69,8 @@
 
           <!-- 菜单栏主题切换按钮 -->
           <t-tooltip v-if="!collapsed" :content="sidebarTheme === 'dark' ? '明亮' : '暗黑'">
-            <t-button shape="square" variant="text" ghost @click="toggleSidebarTheme" :style="{ color: getTextColor() }">
+            <t-button shape="square" variant="text" ghost @click="toggleSidebarTheme"
+              :style="{ color: getTextColor() }">
               <template #icon>
                 <t-icon :name="sidebarTheme === 'dark' ? 'sunny' : 'moon'" />
               </template>

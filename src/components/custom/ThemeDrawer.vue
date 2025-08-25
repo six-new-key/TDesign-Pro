@@ -3,9 +3,7 @@
         :close-on-overlay-click="true" :footer="true" class="theme-drawer">
         <template #footer>
             <div class="theme-actions">
-                <t-button theme="default" variant="base" @click="handleReset" size="medium" class="action-button">
-                    重置主题
-                </t-button>
+
                 <t-button theme="primary" @click="handleApply" size="medium" class="action-button">
                     应用主题
                 </t-button>
@@ -29,32 +27,7 @@
                 </div>
             </div>
 
-            <!-- 主色调设置 -->
-            <div class="setting-section">
-                <h4 class="section-title">
-                    <t-icon name="palette" class="section-icon" />
-                    主色调
-                </h4>
 
-                <!-- 预设颜色 -->
-                <div class="preset-colors">
-                    <div v-for="color in presetColors" :key="color.value" class="color-item"
-                        :class="{ active: appStore.primaryColor === color.value }"
-                        :style="{ backgroundColor: color.value }" @click="handlePrimaryColorChange(color.value)">
-                        <t-icon v-if="appStore.primaryColor === color.value" name="check" class="color-check" />
-                    </div>
-                </div>
-
-                <!-- 自定义颜色 -->
-                <div class="custom-color-section">
-                    <h4 class="section-title">
-                        <t-icon name="palette" class="section-icon" />
-                        自定义颜色
-                    </h4>
-                    <t-color-picker v-model="customColor" :color-modes="['monochrome']" size="small"
-                        @change="handleCustomColorChange" class="color-picker" />
-                </div>
-            </div>
         </div>
     </t-drawer>
 </template>
@@ -62,7 +35,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { useAppStore } from '@/store/modules/app'
-import { THEME_MODE, PRESET_COLORS } from '@/utils/theme'
+import { THEME_MODE } from '@/utils/theme'
 
 // Props
 const props = defineProps({
@@ -84,7 +57,7 @@ const visible = computed({
     set: (value) => emit('update:modelValue', value)
 })
 
-const customColor = ref(appStore.primaryColor)
+
 
 // 主题模式选项
 const themeModes = [
@@ -93,79 +66,30 @@ const themeModes = [
     { value: THEME_MODE.AUTO, label: '跟随系统', icon: 'desktop' }
 ]
 
-// 预设颜色
-const presetColors = Object.entries(PRESET_COLORS).map(([name, value]) => ({
-    value,
-    label: name,
-    name
-}))
+
 
 // 方法
 const handleThemeModeChange = (mode) => {
     appStore.setThemeMode(mode)
 }
 
-const handlePrimaryColorChange = (color) => {
-    // alert(color)
-    appStore.setPrimaryColor(color)
-}
 
-// 将rgb格式转换为十六进制格式
-const rgbToHex = (rgb) => {
-    if (typeof rgb === 'string' && rgb.startsWith('#')) {
-        return rgb // 已经是十六进制格式
-    }
 
-    if (typeof rgb === 'string' && rgb.startsWith('rgb')) {
-        const match = rgb.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/)
-        if (match) {
-            const r = parseInt(match[1])
-            const g = parseInt(match[2])
-            const b = parseInt(match[3])
-            return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)
-        }
-    }
 
-    return rgb // 返回原值
-}
 
-const handleCustomColorChange = (color) => {
-    // alert(color)
-    // 如果传入了颜色参数，使用该参数；否则使用当前customColor值
-    const colorValue = color || customColor.value
-    const hexColor = rgbToHex(colorValue)
 
-    if (hexColor && /^#[0-9A-Fa-f]{6}$/.test(hexColor)) {
-        appStore.setPrimaryColor(hexColor)
-    }
-}
-
-const handleReset = () => {
-    // 重置为默认主题色
-    const defaultColor = '#0052d9'
-    appStore.setPrimaryColor(defaultColor)
-    // 关闭抽屉
-    visible.value = false
-}
 
 const handleApply = () => {
     // 主题变化是实时应用的，这里只需要关闭抽屉
     visible.value = false
 }
 
-// 监听主色调变化
-watch(() => appStore.primaryColor, (newColor) => {
-    customColor.value = newColor
-})
+
 
 // 导出方法和数据
 defineExpose({
     visible,
-    customColor,
-    handleCustomColorChange,
-    handleReset,
-    handleApply,
-    rgbToHex
+    handleApply
 })
 </script>
 
@@ -250,51 +174,7 @@ defineExpose({
     font-size: 16px;
 }
 
-/* 预设颜色 */
-.preset-colors {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-    margin-bottom: 16px;
-}
 
-.color-item {
-    width: 40px;
-    height: 40px;
-    border-radius: 8px;
-    cursor: pointer;
-    position: relative;
-    border: 2px solid transparent;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.color-item:hover {
-    transform: scale(1.1);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.color-item.active {
-    border-color: var(--td-text-color-primary);
-    box-shadow: 0 0 0 2px var(--td-bg-color-container), 0 0 0 4px var(--td-brand-color);
-}
-
-.color-check {
-    color: white;
-    font-size: 16px;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-}
-
-/* 自定义颜色 */
-.custom-color-section {
-    margin-top: 16px;
-}
-
-.color-picker {
-    width: 100%;
-}
 
 .theme-actions {
     display: flex;
