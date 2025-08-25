@@ -10,6 +10,7 @@
 - **前端框架**: Vue 3.x (Composition API)
 - **构建工具**: Vite 4.x
 - **UI 组件库**: TDesign Vue Next
+- **HTTP 客户端**: Axios 1.7.9
 - **状态管理**: Pinia + pinia-plugin-persistedstate
 - **路由管理**: Vue Router 4.x
 - **图标系统**: vite-plugin-svg-icons
@@ -19,6 +20,19 @@
 
 ```
 src/
+├── api/                # API 接口管理
+│   ├── auth.js         # 认证相关接口
+│   ├── user/           # 用户管理接口
+│   │   └── index.js    # 用户 CRUD 接口
+│   ├── role/           # 角色管理接口
+│   │   └── index.js    # 角色 CRUD 接口
+│   ├── menu/           # 菜单管理接口
+│   │   └── index.js    # 菜单 CRUD 接口
+│   ├── dictData/       # 字典数据接口
+│   │   └── index.js    # 字典数据 CRUD 接口
+│   ├── dictType/       # 字典类型接口
+│   │   └── index.js    # 字典类型 CRUD 接口
+│   └── index.js        # API 统一导出
 ├── components/          # 自定义组件
 │   ├── custom/         # 通用自定义组件
 │   ├── lock-screen/    # 锁屏相关组件
@@ -34,12 +48,329 @@ src/
 ├── store/              # 状态管理
 │   ├── index.js        # Pinia 实例
 │   └── modules/        # Store 模块
+├── utils/              # 工具函数
+│   ├── request.js      # HTTP 请求封装
+│   └── theme.js        # 主题工具函数
 ├── views/              # 页面组件
 ├── plugins/            # 自定义插件
 ├── assets/             # 静态资源
 ├── style.css           # 全局样式
 ├── App.vue             # 根组件
 └── main.js             # 应用入口
+```
+
+## API 接口管理
+
+### HTTP 请求封装
+
+**位置**: `src/utils/request.js`
+
+**功能**: 基于 Axios 的统一 HTTP 请求工具，提供请求/响应拦截、错误处理、Token 管理等功能。
+
+**核心特性**:
+- 统一的请求/响应拦截器
+- 自动 Token 管理和刷新
+- 统一错误处理和消息提示
+- 请求超时控制（默认 10 秒）
+- 支持请求取消和重复请求防护
+
+**使用方法**:
+```javascript
+import { httpRequest } from '@/utils/request'
+
+// GET 请求
+const getUserList = (params) => {
+  return httpRequest({
+    url: '/api/users',
+    method: 'GET',
+    params
+  })
+}
+
+// POST 请求
+const createUser = (data) => {
+  return httpRequest({
+    url: '/api/users',
+    method: 'POST',
+    data
+  })
+}
+
+// PUT 请求
+const updateUser = (id, data) => {
+  return httpRequest({
+    url: `/api/users/${id}`,
+    method: 'PUT',
+    data
+  })
+}
+
+// DELETE 请求
+const deleteUser = (id) => {
+  return httpRequest({
+    url: `/api/users/${id}`,
+    method: 'DELETE'
+  })
+}
+```
+
+### API 接口模块化
+
+项目采用模块化的 API 接口管理方式，按业务功能划分不同的接口模块：
+
+#### 1. 用户管理接口 (`src/api/user/index.js`)
+
+**功能模块**:
+- 用户认证（登录、登出、注册）
+- 用户信息管理（获取、更新个人信息）
+- 用户管理（CRUD 操作）
+- 用户状态管理（启用/禁用）
+- 密码管理（重置、修改）
+- 用户角色管理
+
+**接口示例**:
+```javascript
+// 用户登录
+export const loginUser = (data) => {
+  return httpRequest({
+    url: '/api/auth/login',
+    method: 'POST',
+    data
+  })
+}
+
+// 获取用户列表（分页）
+export const getUserListPage = (params) => {
+  return httpRequest({
+    url: '/api/users/page',
+    method: 'GET',
+    params
+  })
+}
+
+// 创建用户
+export const createUser = (data) => {
+  return httpRequest({
+    url: '/api/users',
+    method: 'POST',
+    data
+  })
+}
+```
+
+#### 2. 角色管理接口 (`src/api/role/index.js`)
+
+**功能模块**:
+- 角色 CRUD 操作
+- 角色状态管理
+- 角色权限分配
+- 角色数据回显
+
+#### 3. 菜单管理接口 (`src/api/menu/index.js`)
+
+**功能模块**:
+- 菜单 CRUD 操作
+- 菜单权限查询
+- 菜单树形数据获取
+- 适配 PrimeVue 框架的查询接口
+
+#### 4. 字典管理接口
+
+**字典类型** (`src/api/dictType/index.js`):
+- 字典类型 CRUD 操作
+- 字典类型状态管理
+- 字典类型数据回显
+
+**字典数据** (`src/api/dictData/index.js`):
+- 字典数据 CRUD 操作
+- 字典数据状态管理
+- 字典标签数据查询
+
+### API 接口开发规范
+
+#### 1. 接口命名规范
+
+```javascript
+// 基础 CRUD 操作
+export const create[Entity] = (data) => { /* 创建 */ }
+export const update[Entity] = (id, data) => { /* 更新 */ }
+export const delete[Entity] = (id) => { /* 删除 */ }
+export const get[Entity] = (id) => { /* 获取单个 */ }
+export const get[Entity]List = (params) => { /* 获取列表 */ }
+export const get[Entity]ListPage = (params) => { /* 分页查询 */ }
+
+// 批量操作
+export const batchDelete[Entity] = (ids) => { /* 批量删除 */ }
+export const batchUpdate[Entity] = (data) => { /* 批量更新 */ }
+
+// 状态管理
+export const update[Entity]Status = (id, status) => { /* 状态更新 */ }
+
+// 数据回显
+export const echo[Entity] = (id) => { /* 数据回显 */ }
+```
+
+#### 2. 请求参数规范
+
+```javascript
+// 分页查询参数
+const pageParams = {
+  page: 1,        // 页码
+  size: 10,       // 每页大小
+  keyword: '',    // 搜索关键词
+  status: null,   // 状态筛选
+  startTime: '',  // 开始时间
+  endTime: ''     // 结束时间
+}
+
+// 创建/更新参数
+const entityData = {
+  name: '',       // 名称
+  description: '', // 描述
+  status: 1,      // 状态
+  sort: 0         // 排序
+}
+```
+
+#### 3. 响应数据格式
+
+```javascript
+// 统一响应格式
+{
+  "code": 200,           // 状态码
+  "message": "操作成功",  // 消息
+  "data": {             // 数据
+    // 具体业务数据
+  },
+  "timestamp": 1640995200000 // 时间戳
+}
+
+// 分页响应格式
+{
+  "code": 200,
+  "message": "查询成功",
+  "data": {
+    "records": [],      // 数据列表
+    "total": 100,       // 总数
+    "page": 1,          // 当前页
+    "size": 10,         // 每页大小
+    "pages": 10         // 总页数
+  }
+}
+```
+
+#### 4. 错误处理
+
+```javascript
+// 在 request.js 中统一处理错误
+response.interceptors.response.use(
+  (response) => {
+    const { code, message } = response.data
+    if (code !== 200) {
+      MessagePlugin.error(message || '请求失败')
+      return Promise.reject(new Error(message))
+    }
+    return response.data
+  },
+  (error) => {
+    const { status, data } = error.response || {}
+    const message = data?.message || '网络错误'
+    
+    switch (status) {
+      case 401:
+        MessagePlugin.error('登录已过期，请重新登录')
+        // 跳转到登录页
+        break
+      case 403:
+        MessagePlugin.error('没有权限访问')
+        break
+      case 404:
+        MessagePlugin.error('请求的资源不存在')
+        break
+      case 500:
+        MessagePlugin.error('服务器内部错误')
+        break
+      default:
+        MessagePlugin.error(message)
+    }
+    
+    return Promise.reject(error)
+  }
+)
+```
+
+### API 接口使用示例
+
+#### 在组件中使用 API
+
+```vue
+<template>
+  <div>
+    <t-table
+      :data="userList"
+      :loading="loading"
+      :pagination="pagination"
+      @page-change="handlePageChange"
+    >
+      <!-- 表格列定义 -->
+    </t-table>
+  </div>
+</template>
+
+<script setup>
+import { ref, onMounted } from 'vue'
+import { getUserListPage, deleteUser } from '@/api/user'
+import { MessagePlugin } from 'tdesign-vue-next'
+
+const userList = ref([])
+const loading = ref(false)
+const pagination = ref({
+  current: 1,
+  pageSize: 10,
+  total: 0
+})
+
+// 获取用户列表
+const fetchUserList = async () => {
+  try {
+    loading.value = true
+    const params = {
+      page: pagination.value.current,
+      size: pagination.value.pageSize
+    }
+    
+    const response = await getUserListPage(params)
+    userList.value = response.data.records
+    pagination.value.total = response.data.total
+  } catch (error) {
+    console.error('获取用户列表失败:', error)
+  } finally {
+    loading.value = false
+  }
+}
+
+// 删除用户
+const handleDelete = async (userId) => {
+  try {
+    await deleteUser(userId)
+    MessagePlugin.success('删除成功')
+    fetchUserList() // 重新加载列表
+  } catch (error) {
+    console.error('删除用户失败:', error)
+  }
+}
+
+// 分页变化处理
+const handlePageChange = (pageInfo) => {
+  pagination.value.current = pageInfo.current
+  pagination.value.pageSize = pageInfo.pageSize
+  fetchUserList()
+}
+
+onMounted(() => {
+  fetchUserList()
+})
+</script>
 ```
 
 ## 自定义组件详解
@@ -1140,11 +1471,74 @@ onUnmounted(() => {
 
 ## 扩展开发
 
+### 添加新的 API 接口模块
+1. **创建接口文件**:
+   ```bash
+   # 在 src/api 下创建新的业务模块文件夹
+   mkdir src/api/newModule
+   touch src/api/newModule/index.js
+   ```
+
+2. **定义接口函数**:
+   ```javascript
+   // src/api/newModule/index.js
+   import { httpRequest } from '@/utils/request'
+   
+   // 获取列表（分页）
+   export const getNewModuleListPage = (params) => {
+     return httpRequest({
+       url: '/api/newModule/page',
+       method: 'GET',
+       params
+     })
+   }
+   
+   // 创建
+   export const createNewModule = (data) => {
+     return httpRequest({
+       url: '/api/newModule',
+       method: 'POST',
+       data
+     })
+   }
+   
+   // 更新
+   export const updateNewModule = (id, data) => {
+     return httpRequest({
+       url: `/api/newModule/${id}`,
+       method: 'PUT',
+       data
+     })
+   }
+   
+   // 删除
+   export const deleteNewModule = (id) => {
+     return httpRequest({
+       url: `/api/newModule/${id}`,
+       method: 'DELETE'
+     })
+   }
+   ```
+
+3. **在统一导出文件中注册**:
+   ```javascript
+   // src/api/index.js
+   export * as newModule from './newModule'
+   ```
+
+4. **在组件中使用**:
+   ```javascript
+   import { getNewModuleListPage } from '@/api/newModule'
+   // 或者
+   import { newModule } from '@/api'
+   ```
+
 ### 添加新页面
 1. 在 `src/views` 创建页面组件
 2. 在 `src/router/routes.js` 添加路由配置
 3. 更新菜单图标和标题
-4. 测试页面功能和导航
+4. 集成相应的 API 接口
+5. 测试页面功能和导航
 
 ### 添加新组件
 1. 在 `src/components` 创建组件文件
@@ -1157,6 +1551,50 @@ onUnmounted(() => {
 2. 定义状态、计算属性和方法
 3. 配置持久化选项
 4. 在组件中使用 Store
+
+### API 接口调试
+
+#### 1. 开发环境配置
+```javascript
+// vite.config.js
+export default defineConfig({
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8080', // 后端服务地址
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '')
+      }
+    }
+  }
+})
+```
+
+#### 2. 环境变量配置
+```bash
+# .env.development
+VITE_API_BASE_URL=http://localhost:8080
+VITE_APP_TITLE=微信公众号管理系统（开发环境）
+
+# .env.production
+VITE_API_BASE_URL=https://api.example.com
+VITE_APP_TITLE=微信公众号管理系统
+```
+
+#### 3. 接口测试
+```javascript
+// 在浏览器控制台中测试接口
+import { getUserListPage } from '@/api/user'
+
+// 测试获取用户列表
+getUserListPage({ page: 1, size: 10 })
+  .then(response => {
+    console.log('接口响应:', response)
+  })
+  .catch(error => {
+    console.error('接口错误:', error)
+  })
+```
 
 ---
 

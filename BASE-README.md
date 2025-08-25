@@ -40,6 +40,11 @@
 - **Vite Plugin SVG Icons 2.0.1** - SVG 图标插件
 - **Fast Glob 3.3.3** - 文件匹配工具
 
+### HTTP 请求
+
+- **Axios 1.7.9** - HTTP 客户端库
+- **统一请求封装** - 基于 Axios 的请求拦截器和响应处理
+
 ## 📁 项目结构
 
 ```
@@ -47,6 +52,14 @@ wxgzh_admin_ui/
 ├── public/                     # 静态资源目录
 │   └── vite.svg               # 网站图标
 ├── src/                       # 源代码目录
+│   ├── api/                  # API 接口管理
+│   │   ├── auth.js           # 认证相关接口
+│   │   ├── user/             # 用户管理接口
+│   │   ├── role/             # 角色管理接口
+│   │   ├── menu/             # 菜单管理接口
+│   │   ├── dictData/         # 字典数据接口
+│   │   ├── dictType/         # 字典类型接口
+│   │   └── index.js          # API 统一导出
 │   ├── assets/                # 静态资源
 │   │   ├── icons/            # SVG 图标
 │   │   └── vue.svg           # Vue 图标
@@ -71,6 +84,8 @@ wxgzh_admin_ui/
 │   │       └── user.js       # 用户状态
 │   ├── style/                # 样式文件
 │   ├── utils/                # 工具函数
+│   │   ├── request.js        # HTTP 请求封装
+│   │   └── theme.js          # 主题工具函数
 │   ├── views/                # 页面组件
 │   │   ├── about/            # 关于页面
 │   │   ├── content/          # 内容管理
@@ -162,6 +177,23 @@ VITE_PROD_SERVE = 'http://localhost:9900'
 - **开发代理**：API 请求代理到后端服务
 
 ## 📋 功能模块
+
+### 🔌 API 接口管理
+
+- **统一请求封装**：基于 Axios 的 HTTP 请求工具
+  - 请求/响应拦截器
+  - 统一错误处理
+  - 自动 Token 管理
+  - 请求超时控制
+- **模块化接口**：按业务模块组织的 API 接口
+  - 用户管理接口（登录、注册、用户 CRUD）
+  - 角色管理接口（角色 CRUD、权限分配）
+  - 菜单管理接口（菜单 CRUD、权限查询）
+  - 字典管理接口（字典类型和数据管理）
+- **接口规范**：遵循 RESTful API 设计原则
+  - 统一的响应格式
+  - 标准的 HTTP 状态码
+  - 完整的错误信息提示
 
 ### 🏠 首页模块
 
