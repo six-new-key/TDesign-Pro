@@ -1,11 +1,24 @@
 import router from './router/index'
 import { useUserStore } from '@/store/modules/user'
+import { useAppStore } from '@/store/modules/app'
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
+
+// 配置NProgress
+NProgress.configure({ 
+  showSpinner: false, // 不显示加载图标
+  minimum: 0.2, // 最小百分比
+  easing: 'ease', // 动画方式
+  speed: 500 // 递增进度条的速度
+})
 
 // 白名单路由，不需要登录即可访问
 const whiteList = ['/login', '/register', '/404', '/403']
 
 // 路由前置守卫
 router.beforeEach(async (to, from, next) => {
+  // 开始进度条
+  NProgress.start()
 
   const userStore = useUserStore()
   const token = userStore.token
@@ -53,8 +66,14 @@ router.beforeEach(async (to, from, next) => {
 
 // 路由后置守卫
 router.afterEach((to) => {
-  // 设置页面标题
-  document.title = to.meta?.title ? `${to.meta.title} - 微信公众号管理系统` : '微信公众号管理系统'
+  // 结束进度条
+  NProgress.done()
+  
+  // 更新页面标题
+  const title = to.meta?.title || 'TDesign Pro'
+  const appStore = useAppStore()
+  appStore.setTitle(title)
+  document.title = title
 })
 
 export default router

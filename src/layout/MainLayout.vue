@@ -27,31 +27,16 @@
 
 <script setup>
 import { watch, nextTick, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
 import Header from './Header.vue'
 import Sidebar from './Sidebar.vue'
 import FullScreenLock from '@/components/lock-screen/FullScreenLock.vue'
 import { useAppStore } from '@/store/modules/app'
 
-const route = useRoute()
-const router = useRouter()
 const appStore = useAppStore()
 
 // 刷新状态管理
 const isRefreshing = ref(false)
 const routerViewKey = ref(0)
-
-// 监听路由变化
-watch(
-  () => route.path,
-  (newPath) => {
-    // 更新页面标题
-    const title = route.meta?.title || 'TDesign Pro'
-    appStore.setTitle(title)
-    document.title = title
-  },
-  { immediate: true }
-)
 
 // 监听刷新状态
 watch(
