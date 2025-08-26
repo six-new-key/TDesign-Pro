@@ -314,4 +314,12 @@ watch(() => userStore.menuRoutes, (newRoutes) => {
   align-items: center;
   width: 100%;
 }
+
+:deep(.t-default-menu .t-menu__operations:not(:empty)){
+  border: none;
+}
+
+:deep(.t-default-menu .t-menu__logo:not(:empty)){
+  border: none;
+}
 </style>
