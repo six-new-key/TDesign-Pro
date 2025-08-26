@@ -179,7 +179,7 @@ onUnmounted(() => {
 <style scoped>
 .page-tags-section {
   background: var(--td-bg-color-container);
-  padding: 5px 16px;
+  padding: 4px 16px;
   box-shadow: var(--td-shadow-1), 0 1px 2px rgba(0, 0, 0, 0.05);
   /* 底部有抬高的视觉效果 */
   position: relative;

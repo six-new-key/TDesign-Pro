@@ -278,7 +278,6 @@ watch(() => userStore.menuRoutes, (newRoutes) => {
 .logo-section {
   display: flex;
   align-items: center;
-  padding: 16px;
 }
 
 .logo-section-collapsed {

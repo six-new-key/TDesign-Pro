@@ -23,7 +23,7 @@
 
             <!-- 密码输入框 -->
             <div class="password-input-wrapper">
-                <t-input ref="passwordInputRef" size="large" v-model="password" type="password" placeholder="请输入锁屏密码"
+                <t-input ref="passwordInputRef" v-model="password" type="password" placeholder="请输入锁屏密码"
                     class="password-input" @enter="handleLock">
                     <template #suffix-icon>
                         <t-icon name="browse-off" />
@@ -33,7 +33,7 @@
 
             <!-- 锁定按钮 -->
             <div class="lock-button-wrapper">
-                <t-button theme="primary" size="large" block @click="handleLock" :loading="isLocking">
+                <t-button theme="primary" block @click="handleLock" :loading="isLocking">
                     锁定
                 </t-button>
             </div>
@@ -163,7 +163,6 @@ defineExpose({
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 20px 0;
 }
 
 /* 用户头像 */
@@ -210,19 +209,8 @@ defineExpose({
     width: 100%;
 }
 
-:deep(.password-input .t-input__inner) {
-    height: 44px;
-    font-size: 16px;
-}
-
 /* 锁定按钮 */
 .lock-button-wrapper {
     width: 100%;
-}
-
-:deep(.lock-button-wrapper .t-button) {
-    height: 44px;
-    font-size: 16px;
-    font-weight: 500;
 }
 </style>

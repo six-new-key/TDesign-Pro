@@ -40,7 +40,7 @@
         </div>
       </template>
 
-      <t-input ref="unlockPasswordRef" size="large" v-model="unlockPassword" type="password" placeholder="请输入锁屏密码"
+      <t-input ref="unlockPasswordRef" v-model="unlockPassword" type="password" placeholder="请输入锁屏密码"
         class="unlock-input" @enter="handleUnlock" @input="handlePasswordInput" :status="inputStatus" :tips="inputTips">
         <template #suffix-icon>
           <t-icon name="browse-off" />
@@ -48,10 +48,10 @@
       </t-input>
 
       <t-space direction=vertical style="width: 100%;">
-        <t-button theme="primary" size="large" block @click="handleUnlock" :loading="isUnlocking" class="unlock-button">
+        <t-button theme="primary" block @click="handleUnlock" :loading="isUnlocking">
           进入系统
         </t-button>
-        <t-button theme="default" size="large" block @click="handleClose" class="close-button">
+        <t-button theme="default" block @click="handleClose" class="close-button">
           返回登录
         </t-button>
       </t-space>
@@ -61,10 +61,12 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useUserStore } from '@/store/modules/user'
 import { useAppStore } from '@/store/modules/app'
 import { MessagePlugin } from 'tdesign-vue-next'
 
+const router = useRouter()
 const userStore = useUserStore()
 const appStore = useAppStore()
 
@@ -194,6 +196,29 @@ const handleUnlock = async () => {
     MessagePlugin.error('解锁失败，请重试')
   } finally {
     isUnlocking.value = false
+  }
+}
+
+// 处理返回登录（退出登录）
+const handleClose = async () => {
+  try {
+    // 停止时钟更新
+    stopClock()
+    
+    // 清除锁屏相关数据
+    appStore.unlockScreen()
+    appStore.clearLockPassword()
+    
+    // 执行退出登录操作
+    await userStore.logout()
+    
+    // 跳转到登录页面
+    router.push('/login')
+    
+    MessagePlugin.success('已退出登录')
+  } catch (error) {
+    console.error('退出登录失败:', error)
+    MessagePlugin.error('退出登录失败，请重试')
   }
 }
 
@@ -327,12 +352,6 @@ onUnmounted(() => {
 
 .unlock-input {
   margin-bottom: 20px;
-}
-
-.unlock-button {
-  height: 44px;
-  font-size: 16px;
-  font-weight: 500;
 }
 
 /* 响应式设计 */
