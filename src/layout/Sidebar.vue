@@ -62,26 +62,14 @@
 
       <!-- 操作区域插槽 -->
       <template #operations>
-        <div class="sidebar-operations">
-          <!-- 收缩按钮 -->
-          <t-tooltip :content="collapsed ? '展开' : '收缩'">
-            <t-button shape="square" variant="text" ghost @click="toggleSidebar" :style="{ color: getTextColor() }">
-              <template #icon>
-                <t-icon name="view-list" />
-              </template>
-            </t-button>
-          </t-tooltip>
-
-          <!-- 菜单栏主题切换按钮 -->
-          <t-tooltip v-if="!collapsed" :content="sidebarTheme === 'dark' ? '明亮' : '暗黑'">
-            <t-button shape="square" variant="text" ghost @click="toggleSidebarTheme"
-              :style="{ color: getTextColor() }">
-              <template #icon>
-                <t-icon :name="sidebarTheme === 'dark' ? 'sunny' : 'moon'" />
-              </template>
-            </t-button>
-          </t-tooltip>
-        </div>
+        <!-- 收缩按钮 -->
+        <t-tooltip :content="collapsed ? '展开' : '收缩'">
+          <t-button shape="square" variant="text" ghost @click="toggleSidebar" :style="{ color: getTextColor() }">
+            <template #icon>
+              <t-icon name="view-list" />
+            </template>
+          </t-button>
+        </t-tooltip>
       </template>
     </t-menu>
   </t-aside>
@@ -211,11 +199,6 @@ const toggleSidebar = () => {
   appStore.toggleSidebarCollapsed()
 }
 
-// 切换菜单栏主题
-const toggleSidebarTheme = () => {
-  appStore.toggleSidebarTheme()
-}
-
 // 获取文字颜色
 const getTextColor = () => {
   if (globalTheme.value === 'dark') {
@@ -308,18 +291,11 @@ watch(() => userStore.menuRoutes, (newRoutes) => {
   color: var(--td-text-color-anti);
 }
 
-.sidebar-operations {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-}
-
-:deep(.t-default-menu .t-menu__operations:not(:empty)){
+:deep(.t-default-menu .t-menu__operations:not(:empty)) {
   border: none;
 }
 
-:deep(.t-default-menu .t-menu__logo:not(:empty)){
+:deep(.t-default-menu .t-menu__logo:not(:empty)) {
   border: none;
 }
 </style>

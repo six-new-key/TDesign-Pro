@@ -24,43 +24,41 @@
                     界面显示
                 </h4>
                 <div class="ui-control-options">
+                    <!-- 侧边栏主题控制 -->
+                    <div class="ui-control-item">
+                        <div class="control-info">
+                            <t-icon :name="appStore.sidebarTheme === 'dark' ? 'sunny' : 'moon'" class="control-icon" />
+                            <span class="control-label">侧边栏主题</span>
+                        </div>
+                        <t-switch v-model="sidebarThemeSwitch" @change="handleSidebarThemeChange" size="medium" />
+                    </div>
+
                     <!-- 面包屑导航控制 -->
                     <div class="ui-control-item">
                         <div class="control-info">
                             <t-icon name="location" class="control-icon" />
-                            <span class="control-label">面包屑</span>
+                            <span class="control-label">面包屑导航</span>
                         </div>
-                        <t-switch 
-                            v-model="appStore.showBreadcrumb" 
-                            @change="handleBreadcrumbChange"
-                            size="medium"
-                        />
+                        <t-switch v-model="appStore.showBreadcrumb" @change="handleBreadcrumbChange" size="medium" />
                     </div>
-                    
+
                     <!-- 页签组件控制 -->
                     <div class="ui-control-item">
                         <div class="control-info">
                             <t-icon name="view-module" class="control-icon" />
                             <span class="control-label">页面标签</span>
                         </div>
-                        <t-switch 
-                            v-model="appStore.showPageTags" 
-                            @change="handlePageTagsChange"
-                            size="medium"
-                        />
+                        <t-switch v-model="appStore.showPageTags" @change="handlePageTagsChange" size="medium" />
                     </div>
-                    
+
                     <!-- 页签抬高效果控制 -->
                     <div class="ui-control-item">
                         <div class="control-info">
                             <t-icon name="layers" class="control-icon" />
-                            <span class="control-label">页签抬高</span>
+                            <span class="control-label">页签效果</span>
                         </div>
-                        <t-switch 
-                            v-model="appStore.showPageTagsElevation" 
-                            @change="handlePageTagsElevationChange"
-                            size="medium"
-                        />
+                        <t-switch v-model="appStore.showPageTagsElevation" @change="handlePageTagsElevationChange"
+                            size="medium" />
                     </div>
                 </div>
             </div>
@@ -106,8 +104,16 @@ const visible = computed({
 const themeModes = [
     { value: THEME_MODE.LIGHT, label: '浅色', icon: 'sunny' },
     { value: THEME_MODE.DARK, label: '深色', icon: 'moon' },
-    { value: THEME_MODE.AUTO, label: '跟随系统', icon: 'desktop' }
+    { value: THEME_MODE.AUTO, label: '系统', icon: 'desktop' }
 ]
+
+// 侧边栏主题开关状态
+const sidebarThemeSwitch = computed({
+    get: () => appStore.sidebarTheme === 'dark',
+    set: (value) => {
+        appStore.setSidebarTheme(value ? 'dark' : 'light')
+    }
+})
 
 // 方法
 const handleThemeModeChange = (mode) => {
@@ -117,6 +123,11 @@ const handleThemeModeChange = (mode) => {
 // 处理面包屑导航开关变化
 const handleBreadcrumbChange = (value) => {
     appStore.setBreadcrumbVisible(value)
+}
+
+// 处理侧边栏主题开关变化
+const handleSidebarThemeChange = (value) => {
+    appStore.setSidebarTheme(value ? 'dark' : 'light')
 }
 
 // 处理页签组件开关变化
