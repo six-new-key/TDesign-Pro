@@ -14,11 +14,13 @@
 
       <!-- 内容区域 -->
       <t-content class="main-content">
-        <transition name="content-fade" mode="out-in">
-          <router-view v-if="!isRefreshing" :key="routerViewKey" />
-          <div v-else class="refresh-loading" key="loading">
-            <t-loading text="页面刷新中..." />
-          </div>
+        <!-- 刷新loading状态 -->
+        <div v-if="isRefreshing" class="refresh-loading">
+          <t-loading text="页面刷新中..." />
+        </div>
+        <!-- 正常内容区域 -->
+        <transition v-else name="content-fade" mode="out-in">
+          <router-view :key="routerViewKey" />
         </transition>
       </t-content>
     </t-layout>
@@ -118,6 +120,12 @@ const handlePageRefresh = async () => {
   display: flex;
   justify-content: center;
   align-items: center;
+  height: calc(100vh - 140px);
+  width: 100%;
+  position: relative;
+  z-index: 10;
+  background: var(--td-bg-color-page);
+  opacity: 1 !important;
 }
 
 /* 内容区域过渡动画 - 纯淡入淡出效果 */
