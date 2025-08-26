@@ -95,7 +95,7 @@ const handlePageRefresh = async () => {
   background: var(--td-bg-color-page);
   padding: 20px;
   overflow-y: auto;
-  max-height: calc(100vh - 140px);
+  height: 100%;
 }
 
 /* 滚动条样式 */
@@ -120,7 +120,7 @@ const handlePageRefresh = async () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: calc(100vh - 140px);
+  height: 100%;
   width: 100%;
   position: relative;
   z-index: 10;

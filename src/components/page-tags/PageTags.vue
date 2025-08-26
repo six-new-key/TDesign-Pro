@@ -1,6 +1,11 @@
 <template>
   <!-- 页面标签展示区域 -->
-  <div class="page-tags-section" v-if="visitedPages.length > 0">
+  <div class="page-tags-section" 
+       :class="{
+         'page-tags-section--elevated': appStore.pageTagsElevationVisible,
+         'page-tags-section--flat': !appStore.pageTagsElevationVisible
+       }"
+       v-if="visitedPages.length > 0">
     <div class="page-tags-wrapper">
       <!-- 左滚动按钮 -->
       <t-button v-show="showScrollButtons" class="scroll-button scroll-button--left" variant="text" size="small"
@@ -36,10 +41,12 @@ import { ref, computed, watch, nextTick, onMounted, onUnmounted } from 'vue'
 import { IconFont } from 'tdesign-icons-vue-next';
 import { useRouter, useRoute } from 'vue-router'
 import { useTabsStore } from '@/store/modules/tabs'
+import { useAppStore } from '@/store/modules/app'
 
 const router = useRouter()
 const route = useRoute()
 const tabsStore = useTabsStore()
+const appStore = useAppStore()
 
 // 页面标签相关
 const visitedPages = computed(() => tabsStore.getVisitedPages)
@@ -180,10 +187,20 @@ onUnmounted(() => {
 .page-tags-section {
   background: var(--td-bg-color-container);
   padding: 4px 16px;
-  box-shadow: var(--td-shadow-1), 0 1px 2px rgba(0, 0, 0, 0.05);
-  /* 底部有抬高的视觉效果 */
   position: relative;
+  transition: all 0.3s ease;
+}
+
+/* 抬高效果样式 */
+.page-tags-section--elevated {
+  box-shadow: var(--td-shadow-1), 0 1px 2px rgba(244, 243, 243, 0.05);
   z-index: 10;
+}
+
+/* 平铺效果样式 */
+.page-tags-section--flat {
+  box-shadow: none;
+  z-index: 1;
 }
 
 .page-tags-wrapper {

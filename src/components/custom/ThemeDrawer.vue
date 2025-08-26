@@ -17,6 +17,53 @@
                     </div>
                 </div>
             </div>
+
+            <!-- 界面显示设置 -->
+            <div class="setting-section">
+                <h4 class="section-title">
+                    界面显示
+                </h4>
+                <div class="ui-control-options">
+                    <!-- 面包屑导航控制 -->
+                    <div class="ui-control-item">
+                        <div class="control-info">
+                            <t-icon name="location" class="control-icon" />
+                            <span class="control-label">面包屑</span>
+                        </div>
+                        <t-switch 
+                            v-model="appStore.showBreadcrumb" 
+                            @change="handleBreadcrumbChange"
+                            size="medium"
+                        />
+                    </div>
+                    
+                    <!-- 页签组件控制 -->
+                    <div class="ui-control-item">
+                        <div class="control-info">
+                            <t-icon name="view-module" class="control-icon" />
+                            <span class="control-label">页面标签</span>
+                        </div>
+                        <t-switch 
+                            v-model="appStore.showPageTags" 
+                            @change="handlePageTagsChange"
+                            size="medium"
+                        />
+                    </div>
+                    
+                    <!-- 页签抬高效果控制 -->
+                    <div class="ui-control-item">
+                        <div class="control-info">
+                            <t-icon name="layers" class="control-icon" />
+                            <span class="control-label">页签抬高</span>
+                        </div>
+                        <t-switch 
+                            v-model="appStore.showPageTagsElevation" 
+                            @change="handlePageTagsElevationChange"
+                            size="medium"
+                        />
+                    </div>
+                </div>
+            </div>
         </div>
 
         <template #footer>
@@ -55,8 +102,6 @@ const visible = computed({
     set: (value) => emit('update:modelValue', value)
 })
 
-
-
 // 主题模式选项
 const themeModes = [
     { value: THEME_MODE.LIGHT, label: '浅色', icon: 'sunny' },
@@ -64,18 +109,25 @@ const themeModes = [
     { value: THEME_MODE.AUTO, label: '跟随系统', icon: 'desktop' }
 ]
 
-
-
 // 方法
 const handleThemeModeChange = (mode) => {
     appStore.setThemeMode(mode)
 }
 
+// 处理面包屑导航开关变化
+const handleBreadcrumbChange = (value) => {
+    appStore.setBreadcrumbVisible(value)
+}
 
+// 处理页签组件开关变化
+const handlePageTagsChange = (value) => {
+    appStore.setPageTagsVisible(value)
+}
 
-
-
-
+// 处理页签抬高效果开关变化
+const handlePageTagsElevationChange = (value) => {
+    appStore.setPageTagsElevation(value)
+}
 
 const handleApply = () => {
     // 主题变化是实时应用的，这里只需要关闭抽屉
@@ -107,7 +159,6 @@ defineExpose({
 
 .setting-section {
     padding: 0;
-    border-bottom: 1px solid var(--td-border-level-1-color);
 }
 
 .setting-section:last-of-type {
@@ -177,7 +228,37 @@ defineExpose({
     font-size: 16px;
 }
 
+/* 界面控制选项 */
+.ui-control-options {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
 
+.ui-control-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0;
+}
+
+.control-info {
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+
+.control-icon {
+    margin-right: 12px;
+    font-size: 16px;
+    color: var(--td-text-color-secondary);
+}
+
+.control-label {
+    font-size: 14px;
+    color: var(--td-text-color-primary);
+}
 
 .theme-actions {
     display: flex;
