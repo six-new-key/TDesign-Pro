@@ -128,8 +128,6 @@ const breadcrumbItems = computed(() => {
   return items
 })
 
-
-
 // 打开搜索对话框
 const openSearchDialog = () => {
   showSearchDialog.value = true

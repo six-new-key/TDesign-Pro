@@ -1,15 +1,15 @@
-import router from './index'
+import router from './router/index'
 import { useUserStore } from '@/store/modules/user'
-import { getUserInfo } from '@/api/user'
 
 // 白名单路由，不需要登录即可访问
 const whiteList = ['/login', '/register', '/404', '/403']
 
 // 路由前置守卫
 router.beforeEach(async (to, from, next) => {
+
   const userStore = useUserStore()
   const token = userStore.token
-  
+
   // 如果有token
   if (token) {
     if (to.path === '/login') {
@@ -19,11 +19,10 @@ router.beforeEach(async (to, from, next) => {
       // 检查是否已获取用户信息
       if (!userStore.userInfo) {
         try {
-          // 获取用户信息
-          const response = await getUserInfo()
-          if (response.code === 200) {
-            userStore.setUserInfo(response.data)
-            next()
+          // 通过store获取用户信息并处理路由
+          const result = await userStore.getUserInfo()
+          if (result === 'ok') {
+            next({ ...to, replace: true })
           } else {
             // 获取用户信息失败，清除token并跳转到登录页
             userStore.logout()

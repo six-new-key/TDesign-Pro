@@ -26,12 +26,12 @@ export const useTabsStore = defineStore('tabs', {
     addPageTag(page) {
       // 确保首页标签存在
       this.initHomePage()
-      
+
       // 如果是首页路径，不需要添加，因为首页标签已经存在
       if (page.path === '/home') {
         return
       }
-      
+
       const existingPage = this.visitedPages.find(p => p.path === page.path)
       if (!existingPage && page.title) {
         this.visitedPages.push({
@@ -50,7 +50,7 @@ export const useTabsStore = defineStore('tabs', {
       if (path === '/home') {
         return null
       }
-      
+
       const index = this.visitedPages.findIndex(page => page.path === path)
       if (index > -1) {
         this.visitedPages.splice(index, 1)
@@ -87,11 +87,5 @@ export const useTabsStore = defineStore('tabs', {
         this.initHomePage()
       }
     }
-  },
-
-  persist: {
-    key: 'tabs-store',
-    storage: localStorage,
-    paths: ['visitedPages']
   }
 })

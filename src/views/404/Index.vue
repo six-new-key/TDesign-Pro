@@ -5,7 +5,7 @@
       <div style="display: flex;justify-content: center;align-items: center;">
         <div>
           <div style="margin-bottom: 30px">
-            <span>抱歉，页面不见了～</span>
+            抱歉，页面不见了～
           </div>
           <router-link to="/home">
             <t-button type="primary">返回首页</t-button>
@@ -16,11 +16,12 @@
   </div>
 </template>
 
-<style scoped lang='scss'>
+<style scoped>
 .container {
   height: 100vh;
   width: 100%;
   background-color: var(--td-bg-color-container);
+  color: var(--td-text-color-primary);
   display: flex;
   justify-content: center;
   align-items: center;

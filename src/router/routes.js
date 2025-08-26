@@ -51,7 +51,7 @@ export const asyncRoutes = [
     redirect: '/permission/user',
     meta: {
       title: '权限管理',
-      icon: 'user',
+      icon: 'user-locked',
       hide: false
     },
     children: [
@@ -61,7 +61,7 @@ export const asyncRoutes = [
         component: () => import('@/views/permission/user/Index.vue'),
         meta: {
           title: '用户管理',
-          icon: 'usergroup',
+          icon: 'user',
           hide: false
         }
       },
@@ -104,7 +104,7 @@ export const asyncRoutes = [
         component: () => import('@/views/system/dict/Index.vue'),
         meta: {
           title: '字典管理',
-          icon: 'books',
+          icon: 'indicator',
           hide: false
         }
       },
@@ -124,7 +124,7 @@ export const asyncRoutes = [
         component: () => import('@/views/system/log/Index.vue'),
         meta: {
           title: '系统日志',
-          icon: 'file-text',
+          icon: 'system-log',
           hide: false
         }
       },
@@ -143,12 +143,13 @@ export const asyncRoutes = [
 ]
 
 // 任意路由 - 处理404等错误页面
-export const anyRoutes = [
-  {
-    path: '/:pathMatch(.*)*',
-    redirect: '/404',
-    meta: {
-      hidden: true
-    }
-  }
-]
+export const anyRoutes = {
+  path: "/:pathMatch(.*)*",
+  redirect: "/404",
+  name: "any",
+  meta: {
+    title: "任意路由",
+    hide: true,
+    icon: "",
+  },
+};

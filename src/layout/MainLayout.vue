@@ -14,11 +14,12 @@
 
       <!-- 内容区域 -->
       <t-content class="main-content">
-        <router-view v-slot="{ Component, route }">
-          <transition name="page-transition" mode="out-in">
-            <component :is="Component" :key="`${route.path}-${componentKey}`" />
-          </transition>
-        </router-view>
+        <transition name="content-fade" mode="out-in">
+          <router-view v-if="!isRefreshing" :key="routerViewKey" />
+          <div v-else class="refresh-loading" key="loading">
+            <t-loading text="页面刷新中..." />
+          </div>
+        </transition>
       </t-content>
     </t-layout>
   </t-layout>
@@ -26,17 +27,20 @@
 
 <script setup>
 import { watch, nextTick, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import Header from './Header.vue'
 import Sidebar from './Sidebar.vue'
 import FullScreenLock from '@/components/lock-screen/FullScreenLock.vue'
 import { useAppStore } from '@/store/modules/app'
 
 const route = useRoute()
+const router = useRouter()
 const appStore = useAppStore()
 
-// 控制组件重新渲染的key
-const componentKey = ref(0)
+// 刷新状态管理
+const isRefreshing = ref(false)
+const routerViewKey = ref(0)
+
 // 监听路由变化
 watch(
   () => route.path,
@@ -54,15 +58,33 @@ watch(
   () => appStore.shouldRefresh,
   (shouldRefresh) => {
     if (shouldRefresh) {
-      // 使用nextTick确保在下一个DOM更新周期重新渲染组件
-      nextTick(() => {
-        componentKey.value += 1
-        // 重置刷新状态
-        appStore.resetRefresh()
-      })
+      // 执行页面刷新
+      handlePageRefresh()
+      // 重置刷新状态
+      appStore.resetRefresh()
     }
   }
 )
+
+// 处理页面刷新
+const handlePageRefresh = async () => {
+  // 显示刷新加载状态
+  isRefreshing.value = true
+
+  // 等待一小段时间让用户看到刷新提示
+  await new Promise(resolve => setTimeout(resolve, 500))
+
+  // 更新router-view的key来强制重新渲染组件
+  routerViewKey.value += 1
+
+  // 等待DOM更新完成
+  await nextTick()
+
+  // 隐藏刷新加载状态
+  isRefreshing.value = false
+}
+
+
 </script>
 
 <style scoped>
@@ -85,28 +107,8 @@ watch(
 .main-content {
   background: var(--td-bg-color-page);
   padding: 20px;
-  overflow: auto;
+  overflow-y: auto;
   max-height: calc(100vh - 140px);
-  overflow-y: scroll;
-}
-
-/* 页面切换动画 - 舒适的淡入淡出效果 */
-.page-transition-enter-active {
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.page-transition-leave-active {
-  transition: all 0.3s cubic-bezier(0.55, 0.06, 0.68, 0.19);
-}
-
-.page-transition-enter-from {
-  opacity: 0;
-  transform: translateY(10px) scale(0.98);
-}
-
-.page-transition-leave-to {
-  opacity: 0;
-  transform: translateY(-5px) scale(1.02);
 }
 
 /* 滚动条样式 */
@@ -115,15 +117,37 @@ watch(
 }
 
 .main-content::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: var(--td-scrollbar-color);
 }
 
 .main-content::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
+  background: var(--td-scrollbar-thumb-color);
   border-radius: 3px;
 }
 
 .main-content::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
+  background: var(--td-scroll-track-color);
+}
+
+.refresh-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 内容区域过渡动画 - 纯淡入淡出效果 */
+.content-fade-enter-active,
+.content-fade-leave-active {
+  transition: opacity 0.4s ease-in-out;
+}
+
+.content-fade-enter-from,
+.content-fade-leave-to {
+  opacity: 0;
+}
+
+.content-fade-enter-to,
+.content-fade-leave-from {
+  opacity: 1;
 }
 </style>

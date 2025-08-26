@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { constantRoutes } from '@/router/routes'
+import { useUserStore } from './user'
 import { 
   THEME_MODE, 
   setThemeMode as applyThemeMode,
@@ -90,8 +90,6 @@ export const useAppStore = defineStore('app', () => {
     sidebarTheme.value = newTheme
   }
   
-
-  
   const toggleSidebarTheme = () => {
     const newTheme = sidebarTheme.value === 'dark' ? 'light' : 'dark'
     setSidebarTheme(newTheme)
@@ -104,8 +102,6 @@ export const useAppStore = defineStore('app', () => {
   const toggleSidebarCollapsed = () => {
     sidebarCollapsed.value = !sidebarCollapsed.value
   }
-  
-
   
   const initNewThemeSystem = () => {
     // 加载保存的主题配置
@@ -147,7 +143,12 @@ export const useAppStore = defineStore('app', () => {
 
   // 刷新相关方法
   const triggerRefresh = () => {
-    shouldRefresh.value = true
+    // 先重置状态，确保状态变化能被监听到
+    shouldRefresh.value = false
+    // 使用nextTick确保状态重置后再设置为true
+    setTimeout(() => {
+      shouldRefresh.value = true
+    }, 0)
   }
 
   const resetRefresh = () => {
@@ -156,13 +157,19 @@ export const useAppStore = defineStore('app', () => {
 
   // 初始化菜单数据
   const initMenuItems = () => {
+    const userStore = useUserStore()
     const items = []
     
     // 递归提取菜单项，只缓存最深层的子菜单
     const extractMenuItems = (routes, parentPath = '') => {
       routes.forEach(route => {
-        // 跳过隐藏的菜单项和Layout根路由
-        if (route.meta?.hide || route.name === 'Layout') {
+        // 跳过隐藏的菜单项、Layout根路由、登录页面、404页面等
+        if (route.meta?.hide || 
+            route.meta?.hidden || 
+            route.name === 'Layout' || 
+            route.name === 'Login' || 
+            route.name === 'NotFound' ||
+            (route.path && route.path.includes('pathMatch'))) {
           if (route.children) {
             extractMenuItems(route.children, parentPath)
           }
@@ -186,7 +193,8 @@ export const useAppStore = defineStore('app', () => {
       })
     }
     
-    extractMenuItems(constantRoutes)
+    // 使用用户的完整菜单路由（包含权限过滤后的动态路由）
+    extractMenuItems(userStore.menuRoutes)
     menuItems.value = items
   }
 
@@ -242,12 +250,5 @@ export const useAppStore = defineStore('app', () => {
     resetRefresh,
     initMenuItems,
     searchMenuItems
-  }
-}, {
-  persist: {
-    key: 'app-store',
-    storage: localStorage,
-    //只有添加到里面才会持久化
-    paths: ['title', 'sidebarTheme', 'sidebarCollapsed', 'isLocked', 'lockPassword', 'themeMode']
   }
 })
