@@ -140,51 +140,10 @@
         </template>
     </t-dialog>
 
-    <!-- 权限分配弹窗 -->
-    <t-dialog v-model:visible="permissionDialogVisible" header="分配权限" width="800px" :confirm-btn="null"
-        :cancel-btn="null">
-        <div class="permission-assign-content">
-            <p class="assign-role-info">
-                为角色 <strong>{{ currentRole.name }}</strong> 分配权限：
-            </p>
-            <div class="permission-layout">
-                <div class="permission-section">
-                    <h4 class="section-title">已分配权限</h4>
-                    <div class="permission-grid">
-                        <div v-for="permission in selectedPermissions" :key="permission"
-                            class="permission-tag assigned">
-                            {{ permission }}
-                            <t-icon name="close" class="remove-icon" @click="removePermission(permission)" />
-                        </div>
-                        <div v-if="selectedPermissions.length === 0" class="empty-state">
-                            暂无已分配权限
-                        </div>
-                    </div>
-                </div>
-                <div class="permission-section">
-                    <h4 class="section-title">可分配权限</h4>
-                    <div class="permission-grid">
-                        <div v-for="permission in availablePermissions" :key="permission"
-                            class="permission-tag available" @click="addPermission(permission)">
-                            {{ permission }}
-                            <t-icon name="add" class="add-icon" />
-                        </div>
-                        <div v-if="availablePermissions.length === 0" class="empty-state">
-                            暂无可分配权限
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <template #footer>
-            <t-space>
-                <t-button theme="default" @click="permissionDialogVisible = false">取消</t-button>
-                <t-button theme="primary" @click="handleSavePermissions" :loading="permissionSubmitLoading">
-                    保存
-                </t-button>
-            </t-space>
-        </template>
-    </t-dialog>
+    <!-- 权限分配组件 -->
+    <PermissionAssignDialog v-model:visible="permissionDialogVisible" :roleInfo="currentRole"
+        :allPermissions="allPermissions" :rolePermissions="currentRolePermissions"
+        @save-success="handlePermissionSaveSuccess" />
 </template>
 
 <script setup>
@@ -201,8 +160,11 @@ import {
     updateRoleStatus,           // 更新角色状态
     queryRoleListByPage,        // 分页查询角色数据
     echoRole,                   // 角色数据回显
-    saveRolePermission          // 角色分配权限
 } from '@/api/role'
+// 菜单权限相关 API 导入
+import { queryMenuListWithPermission, queryRoleMenuList } from '@/api/menu'
+// 权限分配组件导入
+import PermissionAssignDialog from '@/components/permission-assign'
 
 // ==================== 响应式数据定义 ====================
 // 加载状态控制
@@ -223,11 +185,11 @@ const isEdit = ref(false)                     // 是否为编辑模式
 const currentRole = ref({})                   // 当前操作的角色信息
 
 // 权限相关数据
-const permissionList = ref([])                // 所有权限列表
-const selectedPermissions = ref([])           // 已选中的权限列表
+const allPermissions = ref([])                // 所有权限数据
+const currentRolePermissions = ref([])        // 当前角色的权限数据
 
 // 表单引用
-const roleFormRef = ref()                     // 角色表单引用
+const roleFormRef = ref(null)               // 角色表单引用
 
 // ==================== 表单数据定义 ====================
 // 搜索表单数据
@@ -314,6 +276,22 @@ const roleFormRules = {
 }
 
 // ==================== 业务方法定义 ====================
+/**
+ * 加载所有权限数据
+ * 在组件初始化时预加载，避免每次打开权限分配弹窗时重复请求
+ */
+const loadAllPermissions = async () => {
+    try {
+        const response = await queryMenuListWithPermission()
+        if (response.code === 200) {
+            allPermissions.value = response.data || []
+        }
+    } catch (error) {
+        console.error('加载权限数据失败:', error)
+        MessagePlugin.error('加载权限数据失败')
+    }
+}
+
 /**
  * 获取角色列表数据
  * 根据搜索条件和分页参数查询角色列表
@@ -453,14 +431,29 @@ const handleToggleStatus = (row) => {
 }
 
 /**
- * 处理权限分配操作
- * 打开权限分配弹窗
+ * 处理权限分配
  */
-const handleAssignPermission = (row) => {
-    currentRole.value = row
-    // TODO: 获取角色权限和所有权限列表
-    selectedPermissions.value = []
-    permissionDialogVisible.value = true
+const handleAssignPermission = async (row) => {
+    try {
+        currentRole.value = row
+        // 获取当前角色的权限数据
+        const response = await queryRoleMenuList(row.id)
+        if (response.code === 200) {
+            currentRolePermissions.value = response.data || []
+            permissionDialogVisible.value = true
+        }
+    } catch (error) {
+        console.error('获取角色权限数据失败:', error)
+        MessagePlugin.error('获取角色权限数据失败')
+    }
+}
+
+/**
+ * 权限保存成功回调
+ */
+const handlePermissionSaveSuccess = () => {
+    // 可以在这里刷新角色列表或其他相关数据
+    fetchRoleList()
 }
 
 /**
@@ -483,20 +476,6 @@ const handleRoleSubmit = async () => {
     submitLoading.value = false
 }
 
-/**
- * 处理权限保存操作
- * 保存角色权限分配
- */
-const handleSavePermissions = async () => {
-    permissionSubmitLoading.value = true
-    const response = await saveRolePermission(currentRole.value.id, selectedPermissions.value)
-    if (response.code === 200) {
-        MessagePlugin.success('权限分配成功')
-        permissionDialogVisible.value = false
-    }
-    permissionSubmitLoading.value = false
-}
-
 // ==================== 辅助方法 ====================
 /**
  * 重置角色表单
@@ -509,8 +488,6 @@ const resetRoleForm = () => {
         status: 1
     })
 }
-
-
 
 /**
  * 处理表格选择变化
@@ -530,29 +507,13 @@ const handlePageChange = (pageInfo) => {
 
 
 
-// 计算可分配权限
-const availablePermissions = computed(() => {
-    return permissionList.value.filter(permission => !selectedPermissions.value.includes(permission))
-})
-
-// 添加权限
-const addPermission = (permission) => {
-    if (!selectedPermissions.value.includes(permission)) {
-        selectedPermissions.value.push(permission)
-    }
-}
-
-// 移除权限
-const removePermission = (permission) => {
-    const index = selectedPermissions.value.indexOf(permission)
-    if (index > -1) {
-        selectedPermissions.value.splice(index, 1)
-    }
-}
-
 // ==================== 生命周期钩子 ====================
 onMounted(() => {
-    fetchRoleList()
+    // 并行加载角色列表和权限数据
+    Promise.all([
+        fetchRoleList(),
+        loadAllPermissions()
+    ])
 })
 </script>
 
@@ -595,109 +556,10 @@ onMounted(() => {
         .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: var(--td-comp-margin-s);
+            gap: 16px 24px;
 
             .form-item-full {
                 grid-column: 1 / -1;
-            }
-        }
-    }
-}
-
-/* 权限分配弹窗 */
-.permission-assign-content {
-    .assign-role-info {
-        margin-bottom: var(--td-comp-margin-l);
-        font-size: var(--td-font-size-body-medium);
-        color: var(--td-text-color-primary);
-
-        strong {
-            color: var(--td-brand-color);
-            font-weight: var(--td-font-weight-semi-bold);
-        }
-    }
-
-    .permission-layout {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: var(--td-comp-margin-l);
-
-        .permission-section {
-            .section-title {
-                margin-bottom: var(--td-comp-margin-s);
-                font-size: var(--td-font-size-body-medium);
-                font-weight: var(--td-font-weight-semi-bold);
-                color: var(--td-text-color-primary);
-            }
-
-            .permission-grid {
-                display: flex;
-                flex-wrap: wrap;
-                gap: var(--td-comp-margin-xs);
-                min-height: 200px;
-                padding: var(--td-comp-paddingTB-s) var(--td-comp-paddingLR-s);
-                border: 1px solid var(--td-component-border);
-                border-radius: var(--td-radius-default);
-                background-color: var(--td-bg-color-container);
-
-                .permission-tag {
-                    display: flex;
-                    align-items: center;
-                    gap: var(--td-comp-margin-xxs);
-                    padding: var(--td-comp-paddingTB-xs) var(--td-comp-paddingLR-s);
-                    border-radius: var(--td-radius-small);
-                    font-size: var(--td-font-size-body-small);
-                    cursor: pointer;
-                    transition: all var(--td-transition);
-
-                    &.assigned {
-                        background-color: var(--td-success-color-1);
-                        color: var(--td-success-color-7);
-                        border: 1px solid var(--td-success-color-3);
-
-                        &:hover {
-                            background-color: var(--td-success-color-2);
-                        }
-
-                        .remove-icon {
-                            color: var(--td-success-color-6);
-
-                            &:hover {
-                                color: var(--td-error-color);
-                            }
-                        }
-                    }
-
-                    &.available {
-                        background-color: var(--td-bg-color-secondarycontainer);
-                        color: var(--td-text-color-secondary);
-                        border: 1px solid var(--td-component-border);
-
-                        &:hover {
-                            background-color: var(--td-brand-color-1);
-                            color: var(--td-brand-color-7);
-                            border-color: var(--td-brand-color-3);
-                        }
-
-                        .add-icon {
-                            color: var(--td-text-color-placeholder);
-                        }
-
-                        &:hover .add-icon {
-                            color: var(--td-brand-color-6);
-                        }
-                    }
-                }
-
-                .empty-state {
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    width: 100%;
-                    height: 100px;
-                    color: var(--td-text-color-placeholder);
-                    font-size: var(--td-font-size-body-small);
-                }
             }
         }
     }
