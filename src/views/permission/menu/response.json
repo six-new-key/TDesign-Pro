@@ -1,0 +1,520 @@
+{
+    "code": 200,
+    "message": "请求成功",
+    "data": [
+        {
+            "id": "32",
+            "parentId": "0",
+            "key": "32",
+            "type": 0,
+            "name": "System",
+            "title": "系统管理",
+            "permission": "",
+            "component": "",
+            "status": 1,
+            "children": [
+                {
+                    "id": "65",
+                    "parentId": "32",
+                    "key": "65",
+                    "type": 1,
+                    "name": "DictData",
+                    "title": "字典数据",
+                    "permission": "system:dict_data:list",
+                    "component": "/system/dict_data/index",
+                    "status": 1,
+                    "children": [
+                        {
+                            "id": "75",
+                            "parentId": "65",
+                            "key": "75",
+                            "type": 2,
+                            "name": null,
+                            "title": "字典数据查询重置",
+                            "permission": "system:dict_data:reset",
+                            "component": null,
+                            "status": 1,
+                            "children": null
+                        },
+                        {
+                            "id": "74",
+                            "parentId": "65",
+                            "key": "74",
+                            "type": 2,
+                            "name": null,
+                            "title": "字典数据查询",
+                            "permission": "system:dict_data:query",
+                            "component": null,
+                            "status": 1,
+                            "children": null
+                        },
+                        {
+                            "id": "71",
+                            "parentId": "65",
+                            "key": "71",
+                            "type": 2,
+                            "name": null,
+                            "title": "字典数据修改",
+                            "permission": "system:dict_data:update",
+                            "component": null,
+                            "status": 1,
+                            "children": null
+                        },
+                        {
+                            "id": "70",
+                            "parentId": "65",
+                            "key": "70",
+                            "type": 2,
+                            "name": null,
+                            "title": "字典数据删除",
+                            "permission": "system:dict_data:delete",
+                            "component": null,
+                            "status": 1,
+                            "children": null
+                        },
+                        {
+                            "id": "69",
+                            "parentId": "65",
+                            "key": "69",
+                            "type": 2,
+                            "name": null,
+                            "title": "字典数据新增",
+                            "permission": "system:dict_data:add",
+                            "component": null,
+                            "status": 1,
+                            "children": null
+                        }
+                    ]
+                },
+                {
+                    "id": "64",
+                    "parentId": "32",
+                    "key": "64",
+                    "type": 1,
+                    "name": "Dict",
+                    "title": "字典管理",
+                    "permission": "system:dict:list",
+                    "component": "/system/dict/index",
+                    "status": 1,
+                    "children": [
+                        {
+                            "id": "73",
+                            "parentId": "64",
+                            "key": "73",
+                            "type": 2,
+                            "name": null,
+                            "title": "字典类型查询重置",
+                            "permission": "system:dict:reset",
+                            "component": null,
+                            "status": 1,
+                            "children": null
+                        },
+                        {
+                            "id": "72",
+                            "parentId": "64",
+                            "key": "72",
+                            "type": 2,
+                            "name": null,
+                            "title": "字典类型查询",
+                            "permission": "system:dict:query",
+                            "component": null,
+                            "status": 1,
+                            "children": null
+                        },
+                        {
+                            "id": "68",
+                            "parentId": "64",
+                            "key": "68",
+                            "type": 2,
+                            "name": null,
+                            "title": "字典类型修改",
+                            "permission": "system:dict:update",
+                            "component": null,
+                            "status": 1,
+                            "children": null
+                        },
+                        {
+                            "id": "67",
+                            "parentId": "64",
+                            "key": "67",
+                            "type": 2,
+                            "name": null,
+                            "title": "字典类型删除",
+                            "permission": "system:dict:delete",
+                            "component": null,
+                            "status": 1,
+                            "children": null
+                        },
+                        {
+                            "id": "66",
+                            "parentId": "64",
+                            "key": "66",
+                            "type": 2,
+                            "name": null,
+                            "title": "字典类型新增",
+                            "permission": "system:dict:add",
+                            "component": null,
+                            "status": 1,
+                            "children": null
+                        }
+                    ]
+                },
+                {
+                    "id": "34",
+                    "parentId": "32",
+                    "key": "34",
+                    "type": 1,
+                    "name": "Log",
+                    "title": "日志管理",
+                    "permission": "system:log:list",
+                    "component": "/system/log/index",
+                    "status": 1,
+                    "children": [
+                        {
+                            "id": "46",
+                            "parentId": "34",
+                            "key": "46",
+                            "type": 2,
+                            "name": null,
+                            "title": "日志修改",
+                            "permission": "system:log:update",
+                            "component": null,
+                            "status": 1,
+                            "children": null
+                        },
+                        {
+                            "id": "45",
+                            "parentId": "34",
+                            "key": "45",
+                            "type": 2,
+                            "name": null,
+                            "title": "日志删除",
+                            "permission": "system:log:delete",
+                            "component": null,
+                            "status": 1,
+                            "children": null
+                        }
+                    ]
+                },
+                {
+                    "id": "33",
+                    "parentId": "32",
+                    "key": "33",
+                    "type": 1,
+                    "name": "Notice",
+                    "title": "公告管理",
+                    "permission": "system:notice:list",
+                    "component": "/system/notice/index",
+                    "status": 1,
+                    "children": [
+                        {
+                            "id": "48",
+                            "parentId": "33",
+                            "key": "48",
+                            "type": 2,
+                            "name": null,
+                            "title": "公告修改",
+                            "permission": "system:notice:update",
+                            "component": null,
+                            "status": 1,
+                            "children": null
+                        },
+                        {
+                            "id": "47",
+                            "parentId": "33",
+                            "key": "47",
+                            "type": 2,
+                            "name": null,
+                            "title": "公告删除",
+                            "permission": "system:notice:delete",
+                            "component": null,
+                            "status": 1,
+                            "children": null
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "2",
+            "parentId": "0",
+            "key": "2",
+            "type": 0,
+            "name": "Permission",
+            "title": "权限管理",
+            "permission": "",
+            "component": "",
+            "status": 1,
+            "children": [
+                {
+                    "id": "5",
+                    "parentId": "2",
+                    "key": "5",
+                    "type": 1,
+                    "name": "Menu",
+                    "title": "菜单管理",
+                    "permission": "permission:menu:list",
+                    "component": "/permission/menu/index",
+                    "status": 1,
+                    "children": [
+                        {
+                            "id": "51",
+                            "parentId": "5",
+                            "key": "51",
+                            "type": 2,
+                            "name": null,
+                            "title": "菜单查询重置",
+                            "permission": "permission:menu:reset",
+                            "component": null,
+                            "status": 1,
+                            "children": null
+                        },
+                        {
+                            "id": "50",
+                            "parentId": "5",
+                            "key": "50",
+                            "type": 2,
+                            "name": null,
+                            "title": "菜单查询",
+                            "permission": "permission:menu:query",
+                            "component": null,
+                            "status": 1,
+                            "children": null
+                        },
+                        {
+                            "id": "44",
+                            "parentId": "5",
+                            "key": "44",
+                            "type": 2,
+                            "name": null,
+                            "title": "菜单新增",
+                            "permission": "permission:menu:add",
+                            "component": null,
+                            "status": 1,
+                            "children": null
+                        },
+                        {
+                            "id": "43",
+                            "parentId": "5",
+                            "key": "43",
+                            "type": 2,
+                            "name": null,
+                            "title": "菜单修改",
+                            "permission": "permission:menu:update",
+                            "component": null,
+                            "status": 1,
+                            "children": null
+                        },
+                        {
+                            "id": "42",
+                            "parentId": "5",
+                            "key": "42",
+                            "type": 2,
+                            "name": null,
+                            "title": "菜单删除",
+                            "permission": "permission:menu:delete",
+                            "component": null,
+                            "status": 1,
+                            "children": null
+                        }
+                    ]
+                },
+                {
+                    "id": "4",
+                    "parentId": "2",
+                    "key": "4",
+                    "type": 1,
+                    "name": "Role",
+                    "title": "角色管理",
+                    "permission": "permission:role:list",
+                    "component": "/permission/role/index",
+                    "status": 1,
+                    "children": [
+                        {
+                            "id": "55",
+                            "parentId": "4",
+                            "key": "55",
+                            "type": 2,
+                            "name": null,
+                            "title": "分配权限",
+                            "permission": "permission:role:assign",
+                            "component": null,
+                            "status": 1,
+                            "children": null
+                        },
+                        {
+                            "id": "54",
+                            "parentId": "4",
+                            "key": "54",
+                            "type": 2,
+                            "name": null,
+                            "title": "角色查询重置",
+                            "permission": "permission:role:reset",
+                            "component": null,
+                            "status": 1,
+                            "children": null
+                        },
+                        {
+                            "id": "53",
+                            "parentId": "4",
+                            "key": "53",
+                            "type": 2,
+                            "name": null,
+                            "title": "角色查询",
+                            "permission": "permission:role:query",
+                            "component": null,
+                            "status": 1,
+                            "children": null
+                        },
+                        {
+                            "id": "52",
+                            "parentId": "4",
+                            "key": "52",
+                            "type": 2,
+                            "name": null,
+                            "title": "角色新增",
+                            "permission": "permission:role:add",
+                            "component": null,
+                            "status": 1,
+                            "children": null
+                        },
+                        {
+                            "id": "41",
+                            "parentId": "4",
+                            "key": "41",
+                            "type": 2,
+                            "name": null,
+                            "title": "角色修改",
+                            "permission": "permission:role:update",
+                            "component": null,
+                            "status": 1,
+                            "children": null
+                        },
+                        {
+                            "id": "40",
+                            "parentId": "4",
+                            "key": "40",
+                            "type": 2,
+                            "name": null,
+                            "title": "角色删除",
+                            "permission": "permission:role:delete",
+                            "component": null,
+                            "status": 1,
+                            "children": null
+                        }
+                    ]
+                },
+                {
+                    "id": "3",
+                    "parentId": "2",
+                    "key": "3",
+                    "type": 1,
+                    "name": "User",
+                    "title": "用户管理",
+                    "permission": "permission:user:list",
+                    "component": "/permission/user/index",
+                    "status": 1,
+                    "children": [
+                        {
+                            "id": "85",
+                            "parentId": "3",
+                            "key": "85",
+                            "type": 2,
+                            "name": null,
+                            "title": "用户新增",
+                            "permission": "permission:user:add",
+                            "component": null,
+                            "status": 1,
+                            "children": null
+                        },
+                        {
+                            "id": "60",
+                            "parentId": "3",
+                            "key": "60",
+                            "type": 2,
+                            "name": null,
+                            "title": "分配角色",
+                            "permission": "permission:user:assign",
+                            "component": null,
+                            "status": 1,
+                            "children": null
+                        },
+                        {
+                            "id": "59",
+                            "parentId": "3",
+                            "key": "59",
+                            "type": 2,
+                            "name": null,
+                            "title": "重置密码",
+                            "permission": "permission:user:resetpwd",
+                            "component": null,
+                            "status": 1,
+                            "children": null
+                        },
+                        {
+                            "id": "58",
+                            "parentId": "3",
+                            "key": "58",
+                            "type": 2,
+                            "name": null,
+                            "title": "更多",
+                            "permission": "permission:user:more",
+                            "component": null,
+                            "status": 1,
+                            "children": null
+                        },
+                        {
+                            "id": "57",
+                            "parentId": "3",
+                            "key": "57",
+                            "type": 2,
+                            "name": null,
+                            "title": "用户查询重置",
+                            "permission": "permission:user:reset",
+                            "component": null,
+                            "status": 1,
+                            "children": null
+                        },
+                        {
+                            "id": "56",
+                            "parentId": "3",
+                            "key": "56",
+                            "type": 2,
+                            "name": null,
+                            "title": "用户查询",
+                            "permission": "permission:user:query",
+                            "component": null,
+                            "status": 1,
+                            "children": null
+                        },
+                        {
+                            "id": "39",
+                            "parentId": "3",
+                            "key": "39",
+                            "type": 2,
+                            "name": null,
+                            "title": "用户修改",
+                            "permission": "permission:user:update",
+                            "component": null,
+                            "status": 1,
+                            "children": null
+                        },
+                        {
+                            "id": "38",
+                            "parentId": "3",
+                            "key": "38",
+                            "type": 2,
+                            "name": null,
+                            "title": "用户删除",
+                            "permission": "permission:user:delete",
+                            "component": null,
+                            "status": 1,
+                            "children": null
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "timestamp": 1756287076596
+}
