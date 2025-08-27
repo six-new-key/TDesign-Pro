@@ -520,7 +520,7 @@ onMounted(() => {
 <style scoped lang="scss">
 /* 搜索卡片容器 */
 .search-card {
-    margin-bottom: var(--td-comp-margin-s);
+    margin-bottom: 20px;
 }
 
 /* 搜索表单主容器：左右布局 */

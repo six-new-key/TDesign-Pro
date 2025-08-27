@@ -1,241 +1,236 @@
 <template>
-    <!-- 用户管理主容器 -->
-    <div class="user-management">
-        <!-- 搜索和操作区域 -->
-        <t-card :bordered="false" class="search-card">
-            <!-- 搜索表单容器：左右布局，左侧表单自适应，右侧按钮固定宽度 -->
-            <div class="search-form">
-                <!-- 左侧表单区域：包含搜索条件 -->
-                <div class="search-form-left">
-                    <t-form ref="searchFormRef" :data="searchForm" layout="inline" :label-width="0">
-                        <!-- 用户名搜索 -->
-                        <t-form-item name="username">
-                            <t-input v-model="searchForm.username" placeholder="请输入用户名" clearable
-                                style="width: 200px" />
-                        </t-form-item>
-                        <!-- 手机号搜索 -->
-                        <t-form-item name="phone">
-                            <t-input v-model="searchForm.phone" placeholder="请输入手机号" clearable style="width: 200px" />
-                        </t-form-item>
-                        <!-- 状态筛选 -->
-                        <t-form-item name="status">
-                            <t-select v-model="searchForm.status" placeholder="请选择状态" clearable style="width: 200px">
-                                <t-option value="1" label="启用" />
-                                <t-option value="0" label="禁用" />
-                            </t-select>
-                        </t-form-item>
-                    </t-form>
-                </div>
-                <!-- 右侧操作按钮区域：搜索和重置按钮 -->
-                <div class="search-form-right">
-                    <t-space>
-                        <!-- 搜索按钮 -->
-                        <t-button theme="primary" @click="handleSearch">
-                            <template #icon><t-icon name="search" /></template>
-                            搜索
-                        </t-button>
-                        <!-- 重置按钮 -->
-                        <t-button theme="default" @click="handleReset">
-                            <template #icon><t-icon name="refresh" /></template>
-                            重置
-                        </t-button>
-                    </t-space>
-                </div>
+    <!-- 搜索和操作区域 -->
+    <t-card :bordered="false" class="search-card">
+        <!-- 搜索表单容器：左右布局，左侧表单自适应，右侧按钮固定宽度 -->
+        <div class="search-form">
+            <!-- 左侧表单区域：包含搜索条件 -->
+            <div class="search-form-left">
+                <t-form ref="searchFormRef" :data="searchForm" layout="inline" :label-width="0">
+                    <!-- 用户名搜索 -->
+                    <t-form-item name="username">
+                        <t-input v-model="searchForm.username" placeholder="请输入用户名" clearable style="width: 200px" />
+                    </t-form-item>
+                    <!-- 手机号搜索 -->
+                    <t-form-item name="phone">
+                        <t-input v-model="searchForm.phone" placeholder="请输入手机号" clearable style="width: 200px" />
+                    </t-form-item>
+                    <!-- 状态筛选 -->
+                    <t-form-item name="status">
+                        <t-select v-model="searchForm.status" placeholder="请选择状态" clearable style="width: 200px">
+                            <t-option value="1" label="启用" />
+                            <t-option value="0" label="禁用" />
+                        </t-select>
+                    </t-form-item>
+                </t-form>
             </div>
-        </t-card>
-
-        <!-- 数据表格区域 -->
-        <t-card :bordered="false" class="table-card">
-            <!-- 表格头部操作区域 -->
-            <template #header>
-                <div class="table-header-actions">
-                    <!-- 新增用户按钮 -->
-                    <t-button theme="primary" @click="handleAdd">
-                        <template #icon><t-icon name="add" /></template>
-                        新增用户
-                    </t-button>
-                    <!-- 批量删除按钮：根据选中状态动态显示数量 -->
-                    <t-button theme="danger" variant="outline" :disabled="selectedRowKeys.length === 0"
-                        @click="handleBatchDelete">
-                        <template #icon><t-icon name="delete" /></template>
-                        批量删除 {{ selectedRowKeys.length > 0 ? `(${selectedRowKeys.length})` : '' }}
-                    </t-button>
-                </div>
-            </template>
-            <!-- 用户数据表格：支持多选、分页、排序等功能 -->
-            <t-table maxHeight="420px" ref="tableRef" :data="tableData" :columns="columns" :loading="loading"
-                :pagination="pagination" :selected-row-keys="selectedRowKeys" row-key="id" stripe hover
-                @select-change="handleSelectChange" @page-change="handlePageChange">
-                <!-- 状态列自定义渲染：显示启用/禁用标签 -->
-                <template #status="{ row }">
-                    <t-tag :theme="row.status === 1 ? 'success' : 'danger'" variant="light">
-                        {{ row.status === 1 ? '启用' : '禁用' }}
-                    </t-tag>
-                </template>
-
-                <!-- 操作列自定义渲染：编辑、删除、更多操作 -->
-                <template #operation="{ row }">
-                    <t-space>
-                        <!-- 编辑按钮 -->
-                        <t-button theme="primary" variant="text" size="small" @click="handleEdit(row)">
-                            <template #icon><t-icon name="edit" /></template>
-                            编辑
-                        </t-button>
-                        <!-- 删除按钮：带确认弹窗 -->
-                        <t-popconfirm content="确认删除该用户吗？" @confirm="handleDelete(row)">
-                            <t-button theme="danger" variant="text" size="small">
-                                <template #icon><t-icon name="delete" /></template>
-                                删除
-                            </t-button>
-                        </t-popconfirm>
-                        <!-- 更多操作下拉菜单：角色分配、密码重置、状态切换 -->
-                        <t-dropdown :options="getOperationOptions(row)" @click="handleOperationClick($event, row)">
-                            <t-button theme="default" variant="outline" size="small">
-                                <template #icon><t-icon name="ellipsis" /></template>
-                            </t-button>
-                        </t-dropdown>
-                    </t-space>
-                </template>
-            </t-table>
-        </t-card>
-
-        <!-- 新增/编辑用户弹窗：根据isEdit状态动态显示标题和按钮文本 -->
-        <t-dialog v-model:visible="userDialogVisible" :header="isEdit ? '编辑用户' : '新增用户'" width="700px"
-            :confirm-btn="null" :cancel-btn="null" class="user-form-dialog">
-            <!-- 用户表单：支持表单验证和提交 -->
-            <t-form ref="userFormRef" label-align="top" :data="userForm" :rules="userFormRules" label-width="100px"
-                @submit="handleUserSubmit" class="user-form">
-                <!-- 表单网格布局：两列显示 -->
-                <div class="form-grid">
-                    <!-- 用户名输入：编辑时禁用 -->
-                    <t-form-item label="用户名" name="username" class="form-item">
-                        <t-input v-model="userForm.username" placeholder="请输入用户名" :disabled="isEdit" />
-                    </t-form-item>
-                    <!-- 邮箱输入 -->
-                    <t-form-item label="邮箱" name="email" class="form-item">
-                        <t-input v-model="userForm.email" placeholder="请输入邮箱" />
-                    </t-form-item>
-                    <!-- 密码输入：仅新增时显示 -->
-                    <t-form-item v-if="!isEdit" label="密码" name="password" class="form-item">
-                        <t-input v-model="userForm.password" type="password" placeholder="请输入密码" />
-                    </t-form-item>
-                    <!-- 确认密码：仅新增时显示 -->
-                    <t-form-item v-if="!isEdit" label="确认密码" name="confirmPassword" class="form-item">
-                        <t-input v-model="userForm.confirmPassword" type="password" placeholder="请再次输入密码" />
-                    </t-form-item>
-                    <!-- 手机号输入 -->
-                    <t-form-item label="手机号" name="phone" class="form-item">
-                        <t-input v-model="userForm.phone" placeholder="请输入手机号" />
-                    </t-form-item>
-                    <!-- 状态选择：启用/禁用 -->
-                    <t-form-item label="状态" name="status" class="form-item">
-                        <t-radio-group v-model="userForm.status">
-                            <t-radio :value="1">启用</t-radio>
-                            <t-radio :value="0">禁用</t-radio>
-                        </t-radio-group>
-                    </t-form-item>
-                </div>
-            </t-form>
-            <!-- 弹窗底部按钮 -->
-            <template #footer>
+            <!-- 右侧操作按钮区域：搜索和重置按钮 -->
+            <div class="search-form-right">
                 <t-space>
-                    <!-- 取消按钮 -->
-                    <t-button theme="default" @click="userDialogVisible = false">取消</t-button>
-                    <!-- 提交按钮：根据编辑状态显示不同文本 -->
-                    <t-button theme="primary" @click="handleUserSubmit" :loading="submitLoading">
-                        {{ isEdit ? '更新' : '创建' }}
+                    <!-- 搜索按钮 -->
+                    <t-button theme="primary" @click="handleSearch">
+                        <template #icon><t-icon name="search" /></template>
+                        搜索
+                    </t-button>
+                    <!-- 重置按钮 -->
+                    <t-button theme="default" @click="handleReset">
+                        <template #icon><t-icon name="refresh" /></template>
+                        重置
                     </t-button>
                 </t-space>
-            </template>
-        </t-dialog>
+            </div>
+        </div>
+    </t-card>
 
-        <!-- 角色分配弹窗 -->
-        <t-dialog v-model:visible="roleDialogVisible" header="分配角色" width="800px" :confirm-btn="null"
-            :cancel-btn="null">
-            <div class="role-assign-content">
-                <p class="assign-user-info">
-                    为用户 <strong>{{ currentUser.username }}</strong> 分配角色：
-                </p>
-                <div class="role-layout">
-                    <div class="role-section">
-                        <h4 class="section-title">已分配角色</h4>
-                        <div class="role-grid">
-                            <div v-for="role in selectedRoles" :key="role" class="role-tag assigned">
-                                {{ role }}
-                                <t-icon name="close" class="remove-icon" @click="removeRole(role)" />
-                            </div>
-                            <div v-if="selectedRoles.length === 0" class="empty-state">
-                                暂无已分配角色
-                            </div>
+    <!-- 数据表格区域 -->
+    <t-card :bordered="false" class="table-card">
+        <!-- 表格头部操作区域 -->
+        <template #header>
+            <div class="table-header-actions">
+                <!-- 新增用户按钮 -->
+                <t-button theme="primary" @click="handleAdd">
+                    <template #icon><t-icon name="add" /></template>
+                    新增用户
+                </t-button>
+                <!-- 批量删除按钮：根据选中状态动态显示数量 -->
+                <t-button theme="danger" variant="outline" :disabled="selectedRowKeys.length === 0"
+                    @click="handleBatchDelete">
+                    <template #icon><t-icon name="delete" /></template>
+                    批量删除 {{ selectedRowKeys.length > 0 ? `(${selectedRowKeys.length})` : '' }}
+                </t-button>
+            </div>
+        </template>
+        <!-- 用户数据表格：支持多选、分页、排序等功能 -->
+        <t-table maxHeight="420px" ref="tableRef" :data="tableData" :columns="columns" :loading="loading"
+            :pagination="pagination" :selected-row-keys="selectedRowKeys" row-key="id" stripe hover
+            @select-change="handleSelectChange" @page-change="handlePageChange">
+            <!-- 状态列自定义渲染：显示启用/禁用标签 -->
+            <template #status="{ row }">
+                <t-tag :theme="row.status === 1 ? 'success' : 'danger'" variant="light">
+                    {{ row.status === 1 ? '启用' : '禁用' }}
+                </t-tag>
+            </template>
+
+            <!-- 操作列自定义渲染：编辑、删除、更多操作 -->
+            <template #operation="{ row }">
+                <t-space>
+                    <!-- 编辑按钮 -->
+                    <t-button theme="primary" variant="text" size="small" @click="handleEdit(row)">
+                        <template #icon><t-icon name="edit" /></template>
+                        编辑
+                    </t-button>
+                    <!-- 删除按钮：带确认弹窗 -->
+                    <t-popconfirm content="确认删除该用户吗？" @confirm="handleDelete(row)">
+                        <t-button theme="danger" variant="text" size="small">
+                            <template #icon><t-icon name="delete" /></template>
+                            删除
+                        </t-button>
+                    </t-popconfirm>
+                    <!-- 更多操作下拉菜单：角色分配、密码重置、状态切换 -->
+                    <t-dropdown :options="getOperationOptions(row)" @click="handleOperationClick($event, row)">
+                        <t-button theme="default" variant="outline" size="small">
+                            <template #icon><t-icon name="ellipsis" /></template>
+                        </t-button>
+                    </t-dropdown>
+                </t-space>
+            </template>
+        </t-table>
+    </t-card>
+
+    <!-- 新增/编辑用户弹窗：根据isEdit状态动态显示标题和按钮文本 -->
+    <t-dialog v-model:visible="userDialogVisible" :header="isEdit ? '编辑用户' : '新增用户'" width="700px" :confirm-btn="null"
+        :cancel-btn="null" class="user-form-dialog">
+        <!-- 用户表单：支持表单验证和提交 -->
+        <t-form ref="userFormRef" label-align="top" :data="userForm" :rules="userFormRules" label-width="100px"
+            @submit="handleUserSubmit" class="user-form">
+            <!-- 表单网格布局：两列显示 -->
+            <div class="form-grid">
+                <!-- 用户名输入：编辑时禁用 -->
+                <t-form-item label="用户名" name="username" class="form-item">
+                    <t-input v-model="userForm.username" placeholder="请输入用户名" :disabled="isEdit" />
+                </t-form-item>
+                <!-- 邮箱输入 -->
+                <t-form-item label="邮箱" name="email" class="form-item">
+                    <t-input v-model="userForm.email" placeholder="请输入邮箱" />
+                </t-form-item>
+                <!-- 密码输入：仅新增时显示 -->
+                <t-form-item v-if="!isEdit" label="密码" name="password" class="form-item">
+                    <t-input v-model="userForm.password" type="password" placeholder="请输入密码" />
+                </t-form-item>
+                <!-- 确认密码：仅新增时显示 -->
+                <t-form-item v-if="!isEdit" label="确认密码" name="confirmPassword" class="form-item">
+                    <t-input v-model="userForm.confirmPassword" type="password" placeholder="请再次输入密码" />
+                </t-form-item>
+                <!-- 手机号输入 -->
+                <t-form-item label="手机号" name="phone" class="form-item">
+                    <t-input v-model="userForm.phone" placeholder="请输入手机号" />
+                </t-form-item>
+                <!-- 状态选择：启用/禁用 -->
+                <t-form-item label="状态" name="status" class="form-item">
+                    <t-radio-group v-model="userForm.status">
+                        <t-radio :value="1">启用</t-radio>
+                        <t-radio :value="0">禁用</t-radio>
+                    </t-radio-group>
+                </t-form-item>
+            </div>
+        </t-form>
+        <!-- 弹窗底部按钮 -->
+        <template #footer>
+            <t-space>
+                <!-- 取消按钮 -->
+                <t-button theme="default" @click="userDialogVisible = false">取消</t-button>
+                <!-- 提交按钮：根据编辑状态显示不同文本 -->
+                <t-button theme="primary" @click="handleUserSubmit" :loading="submitLoading">
+                    {{ isEdit ? '更新' : '创建' }}
+                </t-button>
+            </t-space>
+        </template>
+    </t-dialog>
+
+    <!-- 角色分配弹窗 -->
+    <t-dialog v-model:visible="roleDialogVisible" header="分配角色" width="800px" :confirm-btn="null" :cancel-btn="null">
+        <div class="role-assign-content">
+            <p class="assign-user-info">
+                为用户 <strong>{{ currentUser.username }}</strong> 分配角色：
+            </p>
+            <div class="role-layout">
+                <div class="role-section">
+                    <h4 class="section-title">已分配角色</h4>
+                    <div class="role-grid">
+                        <div v-for="role in selectedRoles" :key="role" class="role-tag assigned">
+                            {{ role }}
+                            <t-icon name="close" class="remove-icon" @click="removeRole(role)" />
+                        </div>
+                        <div v-if="selectedRoles.length === 0" class="empty-state">
+                            暂无已分配角色
                         </div>
                     </div>
-                    <div class="role-section">
-                        <h4 class="section-title">可分配角色</h4>
-                        <div class="role-grid">
-                            <div v-for="role in availableRoles" :key="role" class="role-tag available"
-                                @click="addRole(role)">
-                                {{ role }}
-                                <t-icon name="add" class="add-icon" />
-                            </div>
-                            <div v-if="availableRoles.length === 0" class="empty-state">
-                                暂无可分配角色
-                            </div>
+                </div>
+                <div class="role-section">
+                    <h4 class="section-title">可分配角色</h4>
+                    <div class="role-grid">
+                        <div v-for="role in availableRoles" :key="role" class="role-tag available"
+                            @click="addRole(role)">
+                            {{ role }}
+                            <t-icon name="add" class="add-icon" />
+                        </div>
+                        <div v-if="availableRoles.length === 0" class="empty-state">
+                            暂无可分配角色
                         </div>
                     </div>
                 </div>
             </div>
-            <template #footer>
-                <t-space>
-                    <t-button theme="default" @click="roleDialogVisible = false">取消</t-button>
-                    <t-button theme="primary" @click="handleSaveRoles" :loading="roleSubmitLoading">
-                        保存
-                    </t-button>
-                </t-space>
-            </template>
-        </t-dialog>
+        </div>
+        <template #footer>
+            <t-space>
+                <t-button theme="default" @click="roleDialogVisible = false">取消</t-button>
+                <t-button theme="primary" @click="handleSaveRoles" :loading="roleSubmitLoading">
+                    保存
+                </t-button>
+            </t-space>
+        </template>
+    </t-dialog>
 
-        <!-- 重置密码弹窗 -->
-        <t-dialog v-model:visible="passwordDialogVisible" header="重置密码" width="500px" :confirm-btn="null"
-            :cancel-btn="null" class="password-reset-dialog">
-            <div class="user-info-section">
-                <h4 class="user-title">为用户<span class="username-display">{{ currentUser.username }}</span>重置密码</h4>
+    <!-- 重置密码弹窗 -->
+    <t-dialog v-model:visible="passwordDialogVisible" header="重置密码" width="500px" :confirm-btn="null" :cancel-btn="null"
+        class="password-reset-dialog">
+        <div class="user-info-section">
+            <h4 class="user-title">为用户<span class="username-display">{{ currentUser.username }}</span>重置密码</h4>
+        </div>
+
+        <t-form ref="passwordFormRef" :data="passwordForm" :rules="passwordFormRules" label-align="top"
+            label-width="120px" class="password-form">
+            <t-form-item label="新密码" name="newPassword">
+                <t-input v-model="passwordForm.newPassword" type="password" placeholder="请输入新密码" clearable>
+                    <template #prefix-icon>
+                        <t-icon name="lock-on" />
+                    </template>
+                </t-input>
+            </t-form-item>
+            <t-form-item label="确认密码" name="confirmPassword">
+                <t-input v-model="passwordForm.confirmPassword" type="password" placeholder="请再次输入新密码" clearable>
+                    <template #prefix-icon>
+                        <t-icon name="lock-on" />
+                    </template>
+                </t-input>
+            </t-form-item>
+        </t-form>
+
+        <div class="password-tips">
+            <t-icon name="info-circle" class="tip-icon" />
+            <span class="tip-text">密码长度为6-20个字符，建议包含字母、数字和特殊字符</span>
+        </div>
+
+        <template #footer>
+            <div class="dialog-footer">
+                <t-button theme="default" @click="passwordDialogVisible = false">
+                    取消
+                </t-button>
+                <t-button theme="primary" @click="handlePasswordSubmit" :loading="passwordSubmitLoading">
+                    重置密码
+                </t-button>
             </div>
-
-            <t-form ref="passwordFormRef" :data="passwordForm" :rules="passwordFormRules" label-align="top"
-                label-width="120px" class="password-form">
-                <t-form-item label="新密码" name="newPassword">
-                    <t-input v-model="passwordForm.newPassword" type="password" placeholder="请输入新密码" clearable>
-                        <template #prefix-icon>
-                            <t-icon name="lock-on" />
-                        </template>
-                    </t-input>
-                </t-form-item>
-                <t-form-item label="确认密码" name="confirmPassword">
-                    <t-input v-model="passwordForm.confirmPassword" type="password" placeholder="请再次输入新密码" clearable>
-                        <template #prefix-icon>
-                            <t-icon name="lock-on" />
-                        </template>
-                    </t-input>
-                </t-form-item>
-            </t-form>
-
-            <div class="password-tips">
-                <t-icon name="info-circle" class="tip-icon" />
-                <span class="tip-text">密码长度为6-20个字符，建议包含字母、数字和特殊字符</span>
-            </div>
-
-            <template #footer>
-                <div class="dialog-footer">
-                    <t-button theme="default" @click="passwordDialogVisible = false">
-                        取消
-                    </t-button>
-                    <t-button theme="primary" @click="handlePasswordSubmit" :loading="passwordSubmitLoading">
-                        重置密码
-                    </t-button>
-                </div>
-            </template>
-        </t-dialog>
-    </div>
+        </template>
+    </t-dialog>
 </template>
 
 <script setup>
@@ -703,13 +698,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* ==================== 主容器样式 ==================== */
-/* 用户管理页面主容器 */
-.user-management {
-    background: var(--td-bg-color-page);
-    min-height: 100vh;
-}
-
 /* ==================== 搜索区域样式 ==================== */
 /* 搜索卡片容器 */
 .search-card {
