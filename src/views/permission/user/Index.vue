@@ -35,7 +35,7 @@
                             搜索
                         </t-button>
                         <!-- 重置按钮 -->
-                        <t-button variant="outline" @click="handleReset">
+                        <t-button theme="default" @click="handleReset">
                             <template #icon><t-icon name="refresh" /></template>
                             重置
                         </t-button>
@@ -63,9 +63,9 @@
                 </div>
             </template>
             <!-- 用户数据表格：支持多选、分页、排序等功能 -->
-            <t-table maxHeight="420px" ref="tableRef" :data="tableData" :columns="columns" :loading="loading" :pagination="pagination"
-                :selected-row-keys="selectedRowKeys" row-key="id" stripe hover @select-change="handleSelectChange"
-                @page-change="handlePageChange">
+            <t-table maxHeight="420px" ref="tableRef" :data="tableData" :columns="columns" :loading="loading"
+                :pagination="pagination" :selected-row-keys="selectedRowKeys" row-key="id" stripe hover
+                @select-change="handleSelectChange" @page-change="handlePageChange">
                 <!-- 状态列自定义渲染：显示启用/禁用标签 -->
                 <template #status="{ row }">
                     <t-tag :theme="row.status === 1 ? 'success' : 'danger'" variant="light">
@@ -333,7 +333,8 @@ const columns = [
     {
         colKey: 'id',           // ID列
         title: 'ID',
-        width: 80
+        width: 80,
+        fixed: 'left'
     },
     {
         colKey: 'username',     // 用户名列
@@ -662,22 +663,16 @@ const getOperationOptions = (row) => {
         {
             content: '分配角色',
             value: 'assignRole',
-            active: true,
-            theme: 'success',
             divider: true
         },
         {
             content: '重置密码',
             value: 'resetPassword',
-            active: true,
-            theme: 'warning',
             divider: true
         },
         {
             content: row.status === 1 ? '禁用' : '启用',
             value: 'toggleStatus',
-            active: true,
-            theme: 'error',
             divider: true
         },
     ]
@@ -753,6 +748,11 @@ onMounted(() => {
     margin-bottom: 10px;
     font-size: 14px;
     color: var(--td-text-color-primary);
+}
+
+.assign-user-info strong {
+    color: var(--td-brand-color);
+    font-weight: var(--td-font-weight-semi-bold);
 }
 
 /* 角色分配主布局：左右两栏 */

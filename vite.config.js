@@ -52,14 +52,16 @@ export default defineConfig(({ command, mode }) => {
         symbolId: "icon-[dir]-[name]",
       }),
     ],
-    //scss样式配置：global.scss中的变量可以全局使用
-    // css: {
-    //   preprocessorOptions: {
-    //     scss: {
-    //       javascriptEnabled: true,
-    //       additionalData: '@import "./src/style/global.scss";',
-    //     },
-    //   },
-    // },
+    // CSS 预处理器配置
+    css: {
+      preprocessorOptions: {
+        scss: {
+          // 使用现代 Sass API 替代 legacy JS API
+          api: 'modern-compiler',
+          // 如果需要全局样式变量，可以取消注释下面的行
+          // additionalData: '@import "./src/style/global.scss";',
+        },
+      },
+    },
   };
 });
