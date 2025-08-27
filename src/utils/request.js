@@ -4,7 +4,6 @@ import { MessagePlugin } from "tdesign-vue-next";
 import router from "@/router/index";
 import { useUserStore } from "@/store/modules/user";
 
-
 //配置通用的基础路径和超时时间
 const httpRequest = axios.create({
   baseURL: import.meta.env.VITE_APP_BASE_API,
@@ -29,7 +28,7 @@ httpRequest.interceptors.response.use(
     const code = res.code;
     
     // 只有非200状态码才显示错误信息
-    if (code !== 200 && code !== 401) {
+    if (code !== 200) {
       MessagePlugin.error(res.message || '请求失败');
     }
     
