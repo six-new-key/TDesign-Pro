@@ -53,19 +53,20 @@
                 <!-- 新增菜单按钮 -->
                 <t-button theme="primary" @click="handleAdd">
                     <template #icon><t-icon name="add" /></template>
-                    新增菜单
+                    新增
                 </t-button>
                 <!-- 展开/收起按钮 -->
-                <t-button theme="default" variant="outline" @click="handleExpandAll">
+                <t-button theme="default" @click="handleExpandAll">
                     <template #icon><t-icon :name="isExpandAll ? 'unfold-less' : 'unfold-more'" /></template>
-                    {{ isExpandAll ? '收起全部' : '展开全部' }}
+                    {{ isExpandAll ? '收起' : '展开' }}
                 </t-button>
             </div>
         </template>
         <!-- 菜单数据表格：树形结构显示 -->
-        <t-enhanced-table maxHeight="420px" ref="tableRef" :data="tableData" :columns="columns" :loading="loading"
-            :tree="{ childrenKey: 'children', treeNodeColumnIndex: 0, expandTreeNodeOnClick: true }" row-key="id" stripe
-            hover>
+        <t-enhanced-table :expanded-tree-nodes="expandedTreeNodes"
+            :table-content-width="tableLayout === 'fixed' ? undefined : '1300px'" :maxHeight="tableMaxHeight"
+            ref="tableRef" :data="tableData" :columns="columns" :loading="loading" :tree="{ childrenKey: 'children' }"
+            row-key="id" hover @expanded-tree-nodes-change="handleExpandedTreeNodesChange" active-row-type="single">
             <!-- 菜单类型列自定义渲染 -->
             <template #type="{ row }">
                 <t-tag :theme="getTypeTheme(row.type)" variant="light">
@@ -101,10 +102,11 @@
                             删除
                         </t-button>
                     </t-popconfirm>
-                    <!-- 新增子菜单按钮 -->
-                    <t-button theme="default" variant="text" size="small" @click="handleAddChild(row)">
+                    <!-- 新增子菜单按钮（按钮类型不显示） -->
+                    <t-button v-if="row.type !== 2" theme="success" variant="text" size="small"
+                        @click="handleAddChild(row)">
                         <template #icon><t-icon name="add" /></template>
-                        新增
+                        新增下级
                     </t-button>
                 </t-space>
             </template>
@@ -120,28 +122,30 @@
             <!-- 表单网格布局：两列显示 -->
             <div class="form-grid">
                 <!-- 上级菜单选择 -->
-                <t-form-item label="上级菜单" name="parentId" class="form-item full-width">
-                    <t-tree-select v-model="menuForm.parentId" :data="parentMenuOptions"
-                        :keys="{ value: 'id', label: 'title', children: 'children' }" placeholder="请选择上级菜单（不选择则为顶级菜单）"
-                        clearable />
+                <t-form-item label="上级菜单" name="parent" class="form-item full-width">
+                    <t-input v-model="parentName" placeholder="请输入上级菜单名称（0为顶级菜单）"
+                        :disabled="isEdit || (!isEdit && (isHeaderAdd || isChildAdd))" />
                 </t-form-item>
                 <!-- 菜单类型选择 -->
                 <t-form-item label="菜单类型" name="type" class="form-item">
                     <t-radio-group v-model="menuForm.type" @change="handleTypeChange">
-                        <t-radio :value="0">目录</t-radio>
-                        <t-radio :value="1">菜单</t-radio>
-                        <t-radio :value="2">按钮</t-radio>
+                        <t-radio :value="0"
+                            :disabled="isEdit || (!isEdit && (!isHeaderAdd || (isChildAdd && parentMenuType !== null)))">目录</t-radio>
+                        <t-radio :value="1"
+                            :disabled="isEdit || (!isEdit && (isHeaderAdd || (isChildAdd && parentMenuType === 1)))">菜单</t-radio>
+                        <t-radio :value="2"
+                            :disabled="isEdit || (!isEdit && (isHeaderAdd || (isChildAdd && parentMenuType === 0)))">按钮</t-radio>
                     </t-radio-group>
                 </t-form-item>
                 <!-- 菜单名称输入 -->
                 <t-form-item label="菜单名称" name="title" class="form-item">
                     <t-input v-model="menuForm.title" placeholder="请输入菜单名称" />
                 </t-form-item>
-                <!-- 菜单名称（英文） -->
-                <t-form-item label="菜单名称（英文）" name="name" class="form-item">
+                <!-- 菜单名称（英文）（按钮类型不显示） -->
+                <t-form-item v-if="menuForm.type !== 2" label="菜单名称（英文）" name="name" class="form-item">
                     <t-input v-model="menuForm.name" placeholder="请输入菜单名称（英文）" />
                 </t-form-item>
-                <!-- 组件路径（菜单类型显示） -->
+                <!-- 组件路径（菜单类型显示，按钮类型不显示） -->
                 <t-form-item v-if="menuForm.type === 1" label="组件路径" name="component" class="form-item">
                     <t-input v-model="menuForm.component" placeholder="请输入组件路径" />
                 </t-form-item>
@@ -149,13 +153,7 @@
                 <t-form-item v-if="menuForm.type === 2" label="权限标识" name="permission" class="form-item">
                     <t-input v-model="menuForm.permission" placeholder="请输入权限标识" />
                 </t-form-item>
-                <!-- 显示状态 -->
-                <t-form-item label="显示状态" name="visible" class="form-item">
-                    <t-radio-group v-model="menuForm.visible">
-                        <t-radio :value="1">显示</t-radio>
-                        <t-radio :value="0">隐藏</t-radio>
-                    </t-radio-group>
-                </t-form-item>
+
                 <!-- 菜单状态 -->
                 <t-form-item label="菜单状态" name="status" class="form-item">
                     <t-radio-group v-model="menuForm.status">
@@ -181,7 +179,7 @@
 
 <script setup>
 // Vue 3 Composition API 相关导入
-import { ref, reactive, onMounted, computed } from 'vue'
+import { ref, reactive, onMounted, onUnmounted, computed } from 'vue'
 // TDesign 组件库相关导入
 import { MessagePlugin, EnhancedTable } from 'tdesign-vue-next'
 // 菜单管理相关 API 导入
@@ -207,10 +205,23 @@ const menuDialogVisible = ref(false)          // 菜单表单弹窗显示状态
 
 // 业务状态控制
 const isEdit = ref(false)                     // 是否为编辑模式
+const isHeaderAdd = ref(false)                // 是否为表格头部新增（只能创建目录）
+const isChildAdd = ref(false)                 // 是否为操作列新增（上级菜单为当前目录且禁用）
+const parentMenuType = ref(null)              // 父菜单类型（操作列新增时使用）
+const parentName = ref('')                    // 上级菜单名称（临时变量）
 const parentMenuOptions = ref([])             // 上级菜单选项
+const isExpandAll = ref(false);
+const expandedTreeNodes = ref([]);
+const isFullscreen = ref(false);                  // 全屏状态
 
 // 表单引用
 const menuFormRef = ref()                     // 菜单表单引用
+
+// ==================== 计算属性 ====================
+// 动态计算表格最大高度
+const tableMaxHeight = computed(() => {
+    return isFullscreen.value ? undefined : '475px'
+})
 
 // ==================== 表单数据定义 ====================
 // 搜索表单数据
@@ -223,7 +234,7 @@ const searchForm = reactive({
 // 菜单表单数据
 const menuForm = reactive({
     id: null,              // 菜单ID（编辑时使用）
-    parentId: '0',         // 上级菜单ID
+    parent: '0',           // 上级菜单名称
     title: '',             // 菜单名称
     type: 0,               // 菜单类型（0-目录，1-菜单，2-按钮）
     name: '',              // 菜单名称（英文）
@@ -254,11 +265,13 @@ const columns = [
     {
         colKey: 'component',    // 组件路径列
         title: '组件路径',
+        ellipsis: true,
         width: 180
     },
     {
         colKey: 'permission',   // 权限标识列
         title: '权限标识',
+        ellipsis: true,
         width: 200
     },
     {
@@ -270,7 +283,7 @@ const columns = [
     {
         colKey: 'operation',    // 操作列（固定右侧，自定义渲染）
         title: '操作',
-        width: 180,
+        width: 250,
         fixed: 'right',
         cell: 'operation'
     }
@@ -363,29 +376,72 @@ const handleReset = () => {
 }
 
 /**
- * 处理展开/收起全部
+ * 处理展开状态变化
  */
-const handleExpandAll = () => {
-    // 展开/收起功能由EnhancedTable组件内部处理
+const handleExpandedTreeNodesChange = (expandedRowKeys, options) => {
+    expandedTreeNodes.value = expandedRowKeys
 }
 
 /**
- * 处理新增菜单操作
+ * 处理展开/收起全部
+ */
+const handleExpandAll = () => {
+    isExpandAll.value = !isExpandAll.value
+    if (isExpandAll.value) {
+        expandedTreeNodes.value = filterAllPermissions()
+    } else {
+        expandedTreeNodes.value = []
+    }
+}
+
+/**
+ * 实现权限id过滤方法
+ */
+const filterAllPermissions = () => {
+    const ids = []
+    const traverse = (nodes) => {
+        nodes.forEach(node => {
+            ids.push(node.id)
+            if (node.children && node.children.length > 0) {
+                traverse(node.children)
+            }
+        })
+    }
+    traverse(tableData.value)
+    return ids
+}
+
+/**
+ * 处理新增菜单操作（表格头部新增，只能创建目录）
  */
 const handleAdd = () => {
     isEdit.value = false
+    isHeaderAdd.value = true
+    isChildAdd.value = false
+    parentMenuType.value = null  // 重置父菜单类型
     resetMenuForm()
+    menuForm.type = 0  // 强制设置为目录类型
+    parentName.value = '0'  // 设置上级菜单名称为0（顶级菜单）
     fetchParentMenuOptions()
     menuDialogVisible.value = true
 }
 
 /**
- * 处理新增子菜单操作
+ * 处理新增子菜单操作（操作列新增，只能创建菜单和按钮）
  */
 const handleAddChild = (row) => {
     isEdit.value = false
+    isHeaderAdd.value = false
+    isChildAdd.value = true
     resetMenuForm()
-    menuForm.parentId = row.id
+    parentName.value = row.title  // 设置上级菜单名称为当前目录的title值
+    parentMenuType.value = row.type  // 记录父菜单类型
+    // 根据父菜单类型设置默认菜单类型
+    if (row.type === 0) {
+        menuForm.type = 1  // 目录下默认创建菜单
+    } else if (row.type === 1) {
+        menuForm.type = 2  // 菜单下只能创建按钮
+    }
     fetchParentMenuOptions()
     menuDialogVisible.value = true
 }
@@ -395,9 +451,13 @@ const handleAddChild = (row) => {
  */
 const handleEdit = async (row) => {
     isEdit.value = true
+    isHeaderAdd.value = false  // 编辑时不受新增类型限制
+    isChildAdd.value = false   // 编辑时不受新增类型限制
+    parentMenuType.value = null  // 重置父菜单类型
     const response = await echoMenu(row.id)
     if (response.code === 200) {
         Object.assign(menuForm, response.data)
+        parentName.value = menuForm.parent  // 将parent值赋给parentName用于显示
         fetchParentMenuOptions()
         menuDialogVisible.value = true
     }
@@ -442,6 +502,9 @@ const handleMenuSubmit = async () => {
 
     submitLoading.value = true
 
+    // 提交前将parentName的值赋给menuForm.parent
+    menuForm.parent = parentName.value
+
     const response = isEdit.value
         ? await updateMenu(menuForm)
         : await addMenu(menuForm)
@@ -461,7 +524,7 @@ const handleMenuSubmit = async () => {
 const resetMenuForm = () => {
     Object.assign(menuForm, {
         id: null,
-        parentId: '0',
+        parent: '0',
         title: '',
         type: 0,
         name: '',
@@ -469,6 +532,8 @@ const resetMenuForm = () => {
         component: '',
         status: 1
     })
+    parentName.value = ''  // 重置上级菜单名称
+    // 不重置isHeaderAdd，保持新增类型标识
     menuFormRef.value?.clearValidate()
 }
 
@@ -496,9 +561,26 @@ const getTypeLabel = (type) => {
     return labelMap[type] || '未知'
 }
 
+// ==================== 全屏状态监听方法 ====================
+/**
+ * 监听全屏状态变化
+ */
+const handleFullscreenChange = () => {
+    isFullscreen.value = !!document.fullscreenElement
+}
+
 // ==================== 生命周期钩子 ====================
 onMounted(() => {
     fetchMenuList()
+    // 添加全屏状态监听
+    document.addEventListener('fullscreenchange', handleFullscreenChange)
+    // 初始化全屏状态
+    isFullscreen.value = !!document.fullscreenElement
+})
+
+onUnmounted(() => {
+    // 清理全屏状态监听
+    document.removeEventListener('fullscreenchange', handleFullscreenChange)
 })
 </script>
 

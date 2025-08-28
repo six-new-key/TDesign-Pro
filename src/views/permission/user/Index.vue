@@ -49,19 +49,18 @@
                 <!-- 新增用户按钮 -->
                 <t-button theme="primary" @click="handleAdd">
                     <template #icon><t-icon name="add" /></template>
-                    新增用户
+                    新增
                 </t-button>
                 <!-- 批量删除按钮：根据选中状态动态显示数量 -->
-                <t-button theme="danger" variant="outline" :disabled="selectedRowKeys.length === 0"
-                    @click="handleBatchDelete">
+                <t-button theme="danger" :disabled="selectedRowKeys.length === 0" @click="handleBatchDelete">
                     <template #icon><t-icon name="delete" /></template>
-                    批量删除 {{ selectedRowKeys.length > 0 ? `(${selectedRowKeys.length})` : '' }}
+                    删除 {{ selectedRowKeys.length > 0 ? `(${selectedRowKeys.length})` : '' }}
                 </t-button>
             </div>
         </template>
         <!-- 用户数据表格：支持多选、分页、排序等功能 -->
-        <t-table maxHeight="420px" ref="tableRef" :data="tableData" :columns="columns" :loading="loading"
-            :pagination="pagination" :selected-row-keys="selectedRowKeys" row-key="id" stripe hover
+        <t-table :maxHeight="tableMaxHeight" ref="tableRef" :data="tableData" :columns="columns" :loading="loading"
+            :pagination="pagination" :selected-row-keys="selectedRowKeys" row-key="id" hover active-row-type="single"
             @select-change="handleSelectChange" @page-change="handlePageChange">
             <!-- 状态列自定义渲染：显示启用/禁用标签 -->
             <template #status="{ row }">
@@ -235,7 +234,7 @@
 
 <script setup>
 // Vue 3 Composition API 相关导入
-import { ref, reactive, onMounted, computed } from 'vue'
+import { ref, reactive, onMounted, onUnmounted, computed } from 'vue'
 // TDesign 组件库相关导入
 import { MessagePlugin, DialogPlugin } from 'tdesign-vue-next'
 // 用户管理相关 API 导入
@@ -277,6 +276,9 @@ const currentUser = ref({})                   // 当前操作的用户信息
 // 角色相关数据
 const roleList = ref([])                      // 所有角色列表
 const selectedRoles = ref([])                 // 已选中的角色列表
+
+// 全屏状态
+const isFullscreen = ref(false)               // 浏览器全屏状态
 
 // 表单引用
 const userFormRef = ref()                     // 用户表单引用
@@ -408,6 +410,12 @@ const passwordFormRules = {
         }
     ]
 }
+
+// ==================== 计算属性 ====================
+// 根据全屏状态动态设置表格最大高度
+const tableMaxHeight = computed(() => {
+    return isFullscreen.value ? undefined : '420px'
+})
 
 // ==================== 业务方法定义 ====================
 /**
@@ -690,10 +698,24 @@ const handleOperationClick = (data, row) => {
     }
 }
 
+// 全屏状态监听方法
+const handleFullscreenChange = () => {
+    isFullscreen.value = !!document.fullscreenElement
+}
+
 // 生命周期
 onMounted(() => {
     fetchUserList()
     fetchRoleList()
+    // 添加全屏状态监听
+    document.addEventListener('fullscreenchange', handleFullscreenChange)
+    // 初始化全屏状态
+    isFullscreen.value = !!document.fullscreenElement
+})
+
+onUnmounted(() => {
+    // 清理全屏状态监听
+    document.removeEventListener('fullscreenchange', handleFullscreenChange)
 })
 </script>
 

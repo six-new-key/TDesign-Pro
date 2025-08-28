@@ -49,19 +49,18 @@
                 <!-- 新增角色按钮 -->
                 <t-button theme="primary" @click="handleAdd">
                     <template #icon><t-icon name="add" /></template>
-                    新增角色
+                    新增
                 </t-button>
                 <!-- 批量删除按钮：根据选中状态动态显示数量 -->
-                <t-button theme="danger" variant="outline" :disabled="selectedRowKeys.length === 0"
-                    @click="handleBatchDelete">
+                <t-button theme="danger" :disabled="selectedRowKeys.length === 0" @click="handleBatchDelete">
                     <template #icon><t-icon name="delete" /></template>
-                    批量删除 {{ selectedRowKeys.length > 0 ? `(${selectedRowKeys.length})` : '' }}
+                    删除 {{ selectedRowKeys.length > 0 ? `(${selectedRowKeys.length})` : '' }}
                 </t-button>
             </div>
         </template>
         <!-- 角色数据表格：支持多选、分页、排序等功能 -->
-        <t-table maxHeight="420px" ref="tableRef" :data="tableData" :columns="columns" :loading="loading"
-            :pagination="pagination" :selected-row-keys="selectedRowKeys" row-key="id" stripe hover
+        <t-table :maxHeight="tableMaxHeight" ref="tableRef" :data="tableData" :columns="columns" :loading="loading"
+            :pagination="pagination" :selected-row-keys="selectedRowKeys" row-key="id" active-row-type="single" hover
             @select-change="handleSelectChange" @page-change="handlePageChange">
             <!-- 状态列自定义渲染：显示启用/禁用标签 -->
             <template #status="{ row }">
@@ -148,7 +147,7 @@
 
 <script setup>
 // Vue 3 Composition API 相关导入
-import { ref, reactive, onMounted, computed } from 'vue'
+import { ref, reactive, onMounted, onUnmounted, computed } from 'vue'
 // TDesign 组件库相关导入
 import { MessagePlugin, DialogPlugin } from 'tdesign-vue-next'
 // 角色管理相关 API 导入
@@ -187,6 +186,9 @@ const currentRole = ref({})                   // 当前操作的角色信息
 // 权限相关数据
 const allPermissions = ref([])                // 所有权限数据
 const currentRolePermissions = ref([])        // 当前角色的权限数据
+
+// 全屏状态
+const isFullscreen = ref(false)               // 浏览器全屏状态
 
 // 表单引用
 const roleFormRef = ref(null)               // 角色表单引用
@@ -274,6 +276,12 @@ const roleFormRules = {
     ],
 
 }
+
+// ==================== 计算属性 ====================
+// 根据全屏状态动态设置表格最大高度
+const tableMaxHeight = computed(() => {
+    return isFullscreen.value ? undefined : '420px'
+})
 
 // ==================== 业务方法定义 ====================
 /**
@@ -508,12 +516,28 @@ const handlePageChange = (pageInfo) => {
 
 
 // ==================== 生命周期钩子 ====================
+// 全屏状态变化处理方法
+const handleFullscreenChange = () => {
+    isFullscreen.value = !!document.fullscreenElement
+}
+
 onMounted(() => {
     // 并行加载角色列表和权限数据
     Promise.all([
         fetchRoleList(),
         loadAllPermissions()
     ])
+
+    // 添加全屏状态监听
+    document.addEventListener('fullscreenchange', handleFullscreenChange)
+    // 初始化全屏状态
+    isFullscreen.value = !!document.fullscreenElement
+})
+
+// 组件卸载时执行
+onUnmounted(() => {
+    // 清理全屏状态监听
+    document.removeEventListener('fullscreenchange', handleFullscreenChange)
 })
 </script>
 
