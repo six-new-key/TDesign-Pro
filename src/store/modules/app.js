@@ -24,6 +24,11 @@ export const useAppStore = defineStore('app', () => {
   const isLocked = ref(false) // 锁屏状态
   const lockPassword = ref('') // 锁屏密码
   
+  // 界面显示控制状态
+  const showBreadcrumb = ref(true) // 面包屑显示控制
+  const showPageTags = ref(true) // 页面标签显示控制
+  const pageTagsShadow = ref(true) // 页面标签底部阴影效果控制
+  
   // getters
   const currentTitle = computed(() => title.value)
   const currentSidebarTheme = computed(() => sidebarTheme.value)
@@ -36,6 +41,11 @@ export const useAppStore = defineStore('app', () => {
   const currentActualThemeMode = computed(() => actualThemeMode.value)
   const isDarkMode = computed(() => actualThemeMode.value === 'dark')
   const isAutoMode = computed(() => themeMode.value === THEME_MODE.AUTO)
+  
+  // 界面显示控制 getters
+  const breadcrumbVisible = computed(() => showBreadcrumb.value)
+  const pageTagsVisible = computed(() => showPageTags.value)
+  const pageTagsShadowEnabled = computed(() => pageTagsShadow.value)
   
   // actions
   const setTitle = (newTitle) => {
@@ -92,9 +102,15 @@ export const useAppStore = defineStore('app', () => {
   
 
   
-  const toggleSidebarTheme = () => {
-    const newTheme = sidebarTheme.value === 'dark' ? 'light' : 'dark'
-    setSidebarTheme(newTheme)
+  const toggleSidebarTheme = (theme) => {
+    if (theme) {
+      // 如果传入了具体的主题值，直接设置
+      setSidebarTheme(theme)
+    } else {
+      // 如果没有传入参数，则切换主题
+      const newTheme = sidebarTheme.value === 'dark' ? 'light' : 'dark'
+      setSidebarTheme(newTheme)
+    }
   }
   
   const setSidebarCollapsed = (collapsed) => {
@@ -103,6 +119,31 @@ export const useAppStore = defineStore('app', () => {
   
   const toggleSidebarCollapsed = () => {
     sidebarCollapsed.value = !sidebarCollapsed.value
+  }
+  
+  // 界面显示控制方法
+  const setBreadcrumbVisible = (visible) => {
+    showBreadcrumb.value = visible
+  }
+  
+  const setPageTagsVisible = (visible) => {
+    showPageTags.value = visible
+  }
+  
+  const setPageTagsShadow = (enabled) => {
+    pageTagsShadow.value = enabled
+  }
+  
+  const toggleBreadcrumbVisible = () => {
+    showBreadcrumb.value = !showBreadcrumb.value
+  }
+  
+  const togglePageTagsVisible = () => {
+    showPageTags.value = !showPageTags.value
+  }
+  
+  const togglePageTagsShadow = () => {
+    pageTagsShadow.value = !pageTagsShadow.value
   }
   
 
@@ -212,6 +253,9 @@ export const useAppStore = defineStore('app', () => {
     lockPassword,
     themeMode,
     actualThemeMode,
+    showBreadcrumb,
+    showPageTags,
+    pageTagsShadow,
     currentTitle,
     currentSidebarTheme,
     isSidebarCollapsed,
@@ -221,6 +265,9 @@ export const useAppStore = defineStore('app', () => {
     currentActualThemeMode,
     isDarkMode,
     isAutoMode,
+    breadcrumbVisible,
+    pageTagsVisible,
+    pageTagsShadowEnabled,
     setTitle,
     setSidebarTheme,
     toggleSidebarTheme,
@@ -233,6 +280,12 @@ export const useAppStore = defineStore('app', () => {
     saveThemeConfig,
     loadThemeConfig,
     initNewThemeSystem,
+    setBreadcrumbVisible,
+    setPageTagsVisible,
+    setPageTagsShadow,
+    toggleBreadcrumbVisible,
+    togglePageTagsVisible,
+    togglePageTagsShadow,
     setLockStatus,
     lockScreen,
     unlockScreen,
@@ -248,6 +301,6 @@ export const useAppStore = defineStore('app', () => {
     key: 'app-store',
     storage: localStorage,
     //只有添加到里面才会持久化
-    paths: ['title', 'sidebarTheme', 'sidebarCollapsed', 'isLocked', 'lockPassword', 'themeMode']
+    paths: ['title', 'sidebarTheme', 'sidebarCollapsed', 'isLocked', 'lockPassword', 'themeMode', 'showBreadcrumb', 'showPageTags', 'pageTagsShadow']
   }
 })

@@ -4,7 +4,7 @@
       <!-- 左侧区域 -->
       <div class="header-left">
         <!-- 面包屑导航 -->
-        <t-breadcrumb class="breadcrumb">
+        <t-breadcrumb v-if="appStore.breadcrumbVisible" class="breadcrumb">
           <t-breadcrumb-item v-for="item in breadcrumbItems" :key="item.path" :to="item.path">
             <template #icon>
               <icon-font :name="item.icon" size="15px" style="margin-top: 2px;" />
@@ -59,7 +59,7 @@
   </t-header>
 
   <!-- 页面标签组件 -->
-  <PageTags />
+  <PageTags v-if="appStore.pageTagsVisible" />
 
   <!-- 搜索对话框组件 -->
   <SearchDialog v-model="showSearchDialog" />

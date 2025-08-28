@@ -40,7 +40,7 @@
         </div>
       </template>
 
-      <t-input ref="unlockPasswordRef" size="large" v-model="unlockPassword" type="password" placeholder="请输入锁屏密码"
+      <t-input ref="unlockPasswordRef" v-model="unlockPassword" type="password" placeholder="请输入锁屏密码"
         class="unlock-input" @enter="handleUnlock" @input="handlePasswordInput" :status="inputStatus" :tips="inputTips">
         <template #suffix-icon>
           <t-icon name="browse-off" />
@@ -48,10 +48,10 @@
       </t-input>
 
       <t-space direction=vertical style="width: 100%;">
-        <t-button theme="primary" size="large" block @click="handleUnlock" :loading="isUnlocking" class="unlock-button">
+        <t-button theme="primary" block @click="handleUnlock" :loading="isUnlocking" class="unlock-button">
           进入系统
         </t-button>
-        <t-button theme="default" size="large" block @click="handleClose" class="close-button">
+        <t-button theme="default" block @click="handleClose" class="close-button">
           返回登录
         </t-button>
       </t-space>

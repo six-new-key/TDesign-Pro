@@ -66,16 +66,6 @@
               </template>
             </t-button>
           </t-tooltip>
-
-          <!-- 菜单栏主题切换按钮 -->
-          <t-tooltip v-if="!collapsed" :content="sidebarTheme === 'dark' ? '明亮' : '暗黑'">
-            <t-button shape="square" variant="text" ghost @click="toggleSidebarTheme"
-              :style="{ color: getTextColor() }">
-              <template #icon>
-                <t-icon :name="sidebarTheme === 'dark' ? 'sunny' : 'moon'" />
-              </template>
-            </t-button>
-          </t-tooltip>
         </div>
       </template>
     </t-menu>
@@ -131,11 +121,6 @@ const sidebarWidth = computed(() => {
 // 切换侧边栏折叠状态
 const toggleSidebar = () => {
   appStore.toggleSidebarCollapsed()
-}
-
-// 切换菜单栏主题
-const toggleSidebarTheme = () => {
-  appStore.toggleSidebarTheme()
 }
 
 // 获取文字颜色：优先考虑全局主题，然后考虑菜单栏主题

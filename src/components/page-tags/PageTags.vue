@@ -36,10 +36,12 @@ import { ref, computed, watch, nextTick, onMounted, onUnmounted } from 'vue'
 import { IconFont } from 'tdesign-icons-vue-next';
 import { useRouter, useRoute } from 'vue-router'
 import { useTabsStore } from '@/store/modules/tabs'
+import { useAppStore } from '@/store/modules/app'
 
 const router = useRouter()
 const route = useRoute()
 const tabsStore = useTabsStore()
+const appStore = useAppStore()
 
 // 页面标签相关
 const visitedPages = computed(() => tabsStore.getVisitedPages)
@@ -179,11 +181,14 @@ onUnmounted(() => {
 <style scoped>
 .page-tags-section {
   background: var(--td-bg-color-container);
-  padding: 5px 16px;
-  box-shadow: var(--td-shadow-1), 0 1px 2px rgba(0, 0, 0, 0.05);
-  /* 底部有抬高的视觉效果 */
+  padding: 4px 16px;
   position: relative;
   z-index: 10;
+}
+
+/* 动态阴影效果 */
+.page-tags-section {
+  box-shadow: v-bind('appStore.pageTagsShadowEnabled ? "var(--td-shadow-1), 0 1px 2px rgba(0, 0, 0, 0.05)" : "none"');
 }
 
 .page-tags-wrapper {
