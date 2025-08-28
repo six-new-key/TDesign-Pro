@@ -36,7 +36,7 @@
           <span style="margin-left: 8px;">正在加载权限数据...</span>
         </div>
         <t-tree v-else ref="permissionTreeRef" :data="props.allPermissions"
-          :keys="{ value: 'id', label: 'title', children: 'children' }" checkable hover activable
+          :keys="{ value: 'id', label: 'title', children: 'children' }" checkable hover activable valueMode="all"
           :expand-all="isExpandAll" v-model:value="selectedPermissionIds" v-model:actived="selectedPermissionIds"
           :height="isHalfScreen ? 450 : 220" expand-on-click-node expandParent line :scroll="{
             rowHeight: 34,
@@ -172,7 +172,7 @@ const handleSave = async () => {
   permissionLoading.value = true
 
   // 调用保存权限的API
-  const response = await saveRolePermission(props.roleInfo.id, selectedPermissionIds.value)
+  await saveRolePermission(props.roleInfo.id, selectedPermissionIds.value)
 
   MessagePlugin.success('权限分配成功')
   emit('save-success')
