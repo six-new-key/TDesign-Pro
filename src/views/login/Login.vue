@@ -85,8 +85,8 @@ import router from '@/router'
 
 // 表单数据
 const formData = reactive({
-  username: '',
-  password: '',
+  username: 'admin',
+  password: '123456',
   captcha: ''
 })
 

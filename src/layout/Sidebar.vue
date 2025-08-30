@@ -5,7 +5,7 @@
       <!-- Logo插槽 -->
       <template #logo>
         <div class="logo-section" :class="{ 'logo-section-collapsed': collapsed }">
-          <img src="/vite.svg" alt="Logo" class="logo" />
+          <svg-icon name="logo" width="34px" height="34px" />
           <span v-if="!collapsed" class="system-title" :class="`system-title--${sidebarTheme}`"
             :style="{ color: getTextColor() }">TDesign Pro</span>
         </div>

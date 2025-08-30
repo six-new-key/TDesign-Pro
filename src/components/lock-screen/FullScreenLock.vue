@@ -34,9 +34,9 @@
       <template #header>
         <div class="unlock-header">
           <div class="unlock-avatar">
-            <div class="avatar-emoji">🤓</div>
+            <svg-icon name="avatar" width="40px" height="40px" />
           </div>
-          <div class="unlock-username">{{ userInfo.name || 'TDesign Pro' }}</div>
+          <div class="unlock-username">{{ userInfo.username || 'TDesign Pro' }}</div>
         </div>
       </template>
 
@@ -48,10 +48,10 @@
       </t-input>
 
       <t-space direction=vertical style="width: 100%;">
-        <t-button theme="primary" block @click="handleUnlock" :loading="isUnlocking" class="unlock-button">
+        <t-button theme="primary" block @click="handleUnlock" :loading="isUnlocking">
           进入系统
         </t-button>
-        <t-button theme="default" block @click="handleClose" class="close-button">
+        <t-button theme="default" block @click="handleLogout">
           返回登录
         </t-button>
       </t-space>
@@ -64,6 +64,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useUserStore } from '@/store/modules/user'
 import { useAppStore } from '@/store/modules/app'
 import { MessagePlugin } from 'tdesign-vue-next'
+import router from '@/router'
 
 const userStore = useUserStore()
 const appStore = useAppStore()
@@ -197,6 +198,17 @@ const handleUnlock = async () => {
   }
 }
 
+// 处理注销操作
+const handleLogout = () => {
+  // 清除用户信息
+  userStore.logout()
+  // 解除全局锁屏状态
+  appStore.unlockScreen()
+  // 重定向到登录页
+  router.push('/login')
+}
+
+
 // 组件挂载时开始时钟
 onMounted(() => {
   startClock()
@@ -303,36 +315,22 @@ onUnmounted(() => {
 }
 
 .unlock-avatar {
-  width: 80px;
-  height: 80px;
+  width: 70px;
+  height: 70px;
   border-radius: 50%;
-  background: var(--td-brand-color);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 16px;
-  box-shadow: var(--td-shadow-2);
-}
-
-.avatar-emoji {
-  font-size: 32px;
 }
 
 .unlock-username {
   font-size: 18px;
   font-weight: 500;
-  margin-left: 20px;
   color: var(--td-text-color-primary);
 }
 
 .unlock-input {
   margin-bottom: 20px;
-}
-
-.unlock-button {
-  height: 44px;
-  font-size: 16px;
-  font-weight: 500;
 }
 
 /* 响应式设计 */

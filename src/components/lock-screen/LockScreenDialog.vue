@@ -12,8 +12,7 @@
             <!-- 用户头像 -->
             <div class="user-avatar">
                 <div class="avatar-container">
-                    <!-- 使用emoji作为头像，模拟UI图中的卡通形象 -->
-                    <div class="avatar-emoji">🤓</div>
+                    <svg-icon name="avatar" width="40px" height="40px" />
                 </div>
                 <!-- 用户名 -->
                 <div class="username">
@@ -154,7 +153,6 @@ defineExpose({
 .lock-screen-header h3 {
     margin: 0;
     color: var(--td-text-color-primary);
-    font-size: 18px;
     font-weight: 500;
 }
 
@@ -163,7 +161,6 @@ defineExpose({
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 20px 0;
 }
 
 /* 用户头像 */
@@ -178,16 +175,9 @@ defineExpose({
     width: 70px;
     height: 70px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.avatar-emoji {
-    font-size: 40px;
-    line-height: 1;
 }
 
 /* 用户名 */
@@ -196,7 +186,6 @@ defineExpose({
     font-weight: 500;
     color: var(--td-text-color-primary);
     margin-bottom: 20px;
-    margin-left: 20px;
     text-align: center;
 }
 
@@ -210,19 +199,8 @@ defineExpose({
     width: 100%;
 }
 
-:deep(.password-input .t-input__inner) {
-    height: 44px;
-    font-size: 16px;
-}
-
 /* 锁定按钮 */
 .lock-button-wrapper {
     width: 100%;
-}
-
-:deep(.lock-button-wrapper .t-button) {
-    height: 44px;
-    font-size: 16px;
-    font-weight: 500;
 }
 </style>
